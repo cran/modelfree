@@ -4,7 +4,7 @@
 \description{Maximum likelihood estimates of the parameters of psychometric function with guessing and lapsing rates (GLM) or only guessing rate. The estimated parameters for the linear part are in vector b and the estimated limits are in lims.}
 
 \usage{
-fit<-binom_lims( r, m, x, gl = "both", link = "logit", p = 1, K = 2, initval = NULL );
+binom_lims( r, m, x, gl = c( "both" ), link = c( "logit" ), p = 1, K = 2, initval = NULL )
 }
 \arguments{
 \item{r}{number of successes in points x}
@@ -21,8 +21,8 @@ fit<-binom_lims( r, m, x, gl = "both", link = "logit", p = 1, K = 2, initval = N
 }
 
 \examples{
-data( "01_Miranda" );
-value <-binom_lims( example01$r, example01$m, example01$x );
+data( "01_Miranda" )
+value <-binom_lims( example01$r, example01$m, example01$x )
 }
 
 \keyword{nonparametric}

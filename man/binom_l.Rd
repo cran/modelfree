@@ -7,7 +7,7 @@
 THIS IS AN INTERNAL FUNCTION: USE \code{BINOM_LIMS} FOR BEST RESULTS. Maximum likelihood estimates of the parameters of psychometric function with lapsing rate (GLM). The estimated parameters for the linear part are in vector b and the estimated guessing rate is guess (GLM).}
 
 \usage{
-value<-binom_l( r, m, x, link, p, K, initval );
+binom_l( r, m, x, link, p, K, initval )
 }
 \arguments{
 \item{r}{number of successes in points \code{x}}
@@ -26,8 +26,8 @@ fit: glm object to be used in evaluation of fitted values}
 }
 
 \examples{
-data( "01_Miranda" );
-value <-binom_l( example01$r, example01$m, example01$x, "logit", 1, 2, 0.01 );
+data( "01_Miranda" )
+value <-binom_l( example01$r, example01$m, example01$x, "logit", 1, 2, 0.01 )
 }
 
 \keyword{nonparametric}

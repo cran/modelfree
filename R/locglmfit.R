@@ -1,6 +1,6 @@
-locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = "logit",
+locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = c( "logit" ),
                      guessing = 0, lapsing = 0, K = 2, p = 1,
-                     ker = "dnorm", maxiter = 50, tol = 1e-6 ) {
+                     ker = c( "dnorm" ), maxiter = 50, tol = 1e-6 ) {
 #
 # Local polynomial estimator for the psychometric function and eta function (psychometric function 
 # transformed by link) for binomial data; also returns the hat matrix H. Actual calculations are 

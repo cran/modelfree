@@ -4,7 +4,7 @@
 \description{Calculates an estimate of the AMISE optimal bandwidth for the local polynomial estimator of a psychometric function.}
 
 \usage{
-h<-bandwidth_plugin( r, m, x, link = "logit", guessing = 0, lapsing = 0, K = 2, p = 1, ker = "dnorm" );
+bandwidth_plugin( r, m, x, link = c( "logit" ), guessing = 0, lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ) )
 }
 
 \arguments{
@@ -24,8 +24,8 @@ h<-bandwidth_plugin( r, m, x, link = "logit", guessing = 0, lapsing = 0, K = 2, 
 }
 
 \examples{
-data("01_Miranda");
-h<-bandwidth_plugin( example01$r, example01$m, example01$x );
+data("01_Miranda")
+h<-bandwidth_plugin( example01$r, example01$m, example01$x )
 }
 
 \keyword{nonparametric}

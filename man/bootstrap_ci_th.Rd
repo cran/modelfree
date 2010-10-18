@@ -6,7 +6,7 @@
 \description{Finds bootstrap estimate of a confidence interval at a significant level alpha for the estimated threshold for the local polynomial estimation of psychometric function (PF) with guessing and lapsing rates specified in lims. Confidence interval is based on bootstrap percentiles}
 
 \usage{
-value<-bootstrap_ci_th( TH, r, m, x, N, h0, alpha = 0.05, X = (max(x)-min(x))*(0:999)/999+min(x), link = "logit", guessing = 0, lapsing = 0, K = 2, p = 1, ker = "dnorm", maxiter = 50, tol = 1e-6 );
+bootstrap_ci_th( TH, r, m, x, N, h0, alpha = 0.05, X = (max(x)-min(x))*(0:999)/999+min(x), link = c( "logit" ), guessing = 0, lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ), maxiter = 50, tol = 1e-6 )
 }
 
 \arguments{

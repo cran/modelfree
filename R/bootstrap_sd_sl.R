@@ -1,7 +1,7 @@
 bootstrap_sd_sl <- function( TH, r, m, x, N, h0,
                              X = (max(x)-min(x))*(0:999)/999+min(x),
-                             link = "logit", guessing = 0, lapsing = 0,
-                             K = 2, p = 1, ker = "dnorm", maxiter = 50,
+                             link = c( "logit" ), guessing = 0, lapsing = 0,
+                             K = 2, p = 1, ker = c( "dnorm" ), maxiter = 50,
                              tol = 1e-6 ) {
 #
 # The function finds a bootstrap estimate of the standard deviation of the estimated 

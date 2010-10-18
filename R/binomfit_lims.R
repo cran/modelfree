@@ -1,4 +1,4 @@
-binomfit_lims <- function( r, m, x, p = 1, link = "logit", guessing = 0, lapsing = 0,
+binomfit_lims <- function( r, m, x, p = 1, link = c( "logit" ), guessing = 0, lapsing = 0,
                            K = 2 ) {
 #
 # The function fits a binomial generalised liner model with fixed guessing and lapsing rates.

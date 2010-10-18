@@ -1,6 +1,6 @@
-bandwidth_optimal<-function( ptrue, r, m, x, H, link = "logit", guessing = 0,
-                             lapsing = 0, K = 2, p = 1, ker = "dnorm",
-                             maxiter = 50, tol = 1e-6, method = "all" ) {
+bandwidth_optimal<-function( ptrue, r, m, x, H, link = c( "logit" ), guessing = 0,
+                             lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ),
+                             maxiter = 50, tol = 1e-6, method = c( "all" ) ) {
 #
 # Finds the optimal bandwidth for a local polynomial estimate of the psychometric 
 # function with specified guessing and lapsing rates. The difference between this function 

@@ -4,7 +4,7 @@
 \description{Finds the cross-validation bandwidth for the local polynomial estimator of the psychometric function (PF) with guessing and lapsing rates specified in lims. The difference between this function and \code{bandwidth_cross_validation} is that here the true psychometric function is known.}
 
 \usage{
-h<-bandwidth_optimal( ptrue, r, m, x, H, link = "logit", guessing = 0, lapsing = 0, K = 2, p = 1, ker = "dnorm", maxiter = 50, tol = 1e-6, method = "all" );
+bandwidth_optimal( ptrue, r, m, x, H, link = c( "logit" ), guessing = 0, lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ), maxiter = 50, tol = 1e-6, method = c( "all" ) )
 }
 \arguments{
 \item{ptrue}{the true function. Vector with the value of PF at each design point}

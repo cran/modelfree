@@ -1,4 +1,4 @@
-binom_lims<-function( r, m, x, gl = "both", link = "logit", p = 1, K = 2,
+binom_lims<-function( r, m, x, gl = c( "both" ), link = c( "logit" ), p = 1, K = 2,
                       initval = NULL ) {
 #
 # This function finds the maximum likelihood estimates of the parameters 

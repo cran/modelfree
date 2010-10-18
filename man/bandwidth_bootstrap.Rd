@@ -4,7 +4,7 @@
 \description{Finds bootstrap estimate of the optimal bandwidth \code{h} for binomial data in local polynomial estimation of psychometric function (PF) with guessing and lapsing rates specified in lims.}
 
 \usage{
-h<-bandwidth_bootstrap( r, m, x, H, N, h0 = NULL, link = "logit", guessing = 0, lapsing = 0, K = 2, p = 1, ker = "dnorm", maxiter = 50, tol = 1e-6, method = "all");
+bandwidth_bootstrap( r, m, x, H, N, h0 = NULL, link = c( "logit" ), guessing = 0, lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ), maxiter = 50, tol = 1e-6, method = c( "all" ) )
 }
 \arguments{
 \item{r}{number of successes in points \code{x}}
@@ -28,8 +28,8 @@ h<-bandwidth_bootstrap( r, m, x, H, N, h0 = NULL, link = "logit", guessing = 0, 
 }
 
 \examples{
-data("01_Miranda");
-h<- bandwidth_bootstrap( example01$r, example01$m, example01$x, c( 0.1, 10 ), 10 );
+data("01_Miranda")
+h<- bandwidth_bootstrap( example01$r, example01$m, example01$x, c( 0.1, 10 ), 10 )
 }
 
 \keyword{nonparametric}

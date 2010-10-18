@@ -1,7 +1,7 @@
-bandwidth_cross_validation<-function( r, m, x, H, link = "logit",
+bandwidth_cross_validation<-function( r, m, x, H, link = c( "logit" ),
                                       guessing = 0, lapsing = 0, K = 2,
-                                      p = 1, ker = "dnorm", maxiter = 50,
-                                      tol = 1e-6, method = "all") {
+                                      p = 1, ker = c( "dnorm" ), maxiter = 50,
+                                      tol = 1e-6, method = c( "all" ) ) {
 #
 # The function finds the cross-validation bandwidth for a local polynomial estimate of 
 # the psychometric function with specified guessing and lapsing rates.

@@ -6,12 +6,12 @@
 \description{THIS IS AN INTERNAL FUNCTION: USE \code{LOGIT_LINK} FOR BEST RESULTS.Logit link for use with GLM functions. The guessing and lapsing rate are fixed to values given in \code{lims}, hence \code{link} is a function of only one variable}
 
 \usage{
-link<-logit_link_private( guessing = 0, lapsing = 0 );
+logit_link_private( guessing, lapsing )
 }
 
 \arguments{
-\item{guessing}{guessing rate; default is 0}
-\item{lapsing}{lapsing rate; default is 0}
+\item{guessing}{guessing rate}
+\item{lapsing}{lapsing rate}
 }
 
 \value{
@@ -19,15 +19,15 @@ link<-logit_link_private( guessing = 0, lapsing = 0 );
 }
 
 \examples{
-data( "01_Miranda" );
-x <- example01$x;
-r <- example01$r;
-m <- example01$m;
-glmdata <- data.frame( cbind( r/m ,m , x ) );
-names( glmdata ) <- c( "resp", "m", "x" );
-glmformula <- c( "resp ~ x" );
-userlink<-logit_link_private( 0.1, 0.1 );
-fit <- glm( glmformula, data = glmdata, weights = m, family = binomial( userlink ) );
+data( "01_Miranda" )
+x <- example01$x
+r <- example01$r
+m <- example01$m
+glmdata <- data.frame( cbind( r/m ,m , x ) )
+names( glmdata ) <- c( "resp", "m", "x" )
+glmformula <- c( "resp ~ x" )
+userlink<-logit_link_private( 0.1, 0.1 )
+fit <- glm( glmformula, data = glmdata, weights = m, family = binomial( userlink ) )
 }
 
 \keyword{nonparametric}

@@ -6,7 +6,7 @@
 \description{THIS IS AN INTERNAL FUNCTION: USE \code{LOCGLMFIT} FOR BEST RESULTS. Fisher scoring method for local polynomial estimator of a psychometric function (PF).}
 
 \usage{
-value<-locglmfit_private( xfit, r, m, x, h, returnH, link, guessing, lapsing, K, p, ker, maxiter, tol )
+locglmfit_private( xfit, r, m, x, h, returnH, link, guessing, lapsing, K, p, ker, maxiter, tol )
 }
 
 \arguments{
@@ -34,10 +34,10 @@ H: hat matrix (OPTIONAL)}
 }
 
 \examples{
-data( "01_Miranda" );
-xnew = 1.2 * (0:99)/99+0.1;
-h <- 0.2959;
-fit <- locglmfit_private( xnew,  example01$r,  example01$m, example01$x, h, FALSE, "logit_link", 0, 0, 2, 1, "dnorm", 50, 1e-6);
+data( "01_Miranda" )
+xnew = 1.2 * (0:99)/99+0.1
+h <- 0.2959
+fit <- locglmfit_private( xnew,  example01$r,  example01$m, example01$x, h, FALSE, "logit_link", 0, 0, 2, 1, "dnorm", 50, 1e-6)
 }
 
 \keyword{nonparametric}

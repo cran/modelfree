@@ -6,7 +6,7 @@
 }
 
 \usage{
-value<-binom_revweib( r, m, x, p = 1, initK = 2, guessing = 0, lapsing = 0 )
+binom_revweib( r, m, x, p = 1, initK = 2, guessing = 0, lapsing = 0 )
 }
 
 \arguments{
@@ -27,7 +27,7 @@ fit: glm object to be used in evaluation of fitted values}
 }
 
 \examples{
-data( "01_Miranda" );
+data( "01_Miranda" )
 value <- binom_revweib( example01$r, example01$m, example01$x )
 }
 

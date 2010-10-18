@@ -6,7 +6,7 @@
 \description{Finds bootstrap estimate of the standard deviation of the estimated thresholdfor the local polynomial estimation of psychometric function (PF) with guessing and lapsing rates as specified}
 
 \usage{
-value<-bootstrap_sd_th( TH, r, m, x, N, h0, X = (max(x)-min(x))*(0:999)/999+min(x), link = "logit", guessing = 0, lapsing = 0, K = 2, p = 1, ker = "dnorm", maxiter = 50, tol = 1e-6 );
+bootstrap_sd_th( TH, r, m, x, N, h0, X = (max(x)-min(x))*(0:999)/999+min(x), link = c( "logit" ), guessing = 0, lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ), maxiter = 50, tol = 1e-6 )
 }
 
 \arguments{
@@ -35,8 +35,8 @@ th0: threshold estimate}
 
 \examples{
 data( "01_Miranda" )
-bwd <- 0.2959;
-value <- bootstrap_sd_th( 0.5, example01$r, example01$m, example01$x, 10, bwd );
+bwd <- 0.2959
+value <- bootstrap_sd_th( 0.5, example01$r, example01$m, example01$x, 10, bwd )
 }
 
 \keyword{nonparametric}

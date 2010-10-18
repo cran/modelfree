@@ -6,7 +6,7 @@
 \description{Finds the approximate value of \code{x (=x_th)} for which the value of the psychometric function is equal thresh and the approximate value of slope in \code{x_th}}
 
 \usage{
-value<-threshold_slope( pfit, xfit, thresh = 0.5 );
+threshold_slope( pfit, xfit, thresh = 0.5 )
 }
 
 \arguments{
@@ -22,11 +22,11 @@ slope: estimated value of slope, i.e. derivative of pfit at x_th}
 }
 
 \examples{
-data( "01_Miranda" );
-xnew = 1.2 * (0:999)/999+0.1;
-h = 0.2959;
-fit <- locglmfit( xnew, example01$r, example01$m, example01$x, h );
-value <- threshold_slope( fit$pfit , xnew );
+data( "01_Miranda" )
+xnew = 1.2 * (0:999)/999+0.1
+h = 0.2959
+fit <- locglmfit( xnew, example01$r, example01$m, example01$x, h )
+value <- threshold_slope( fit$pfit , xnew )
 }
 
 \keyword{nonparametric}

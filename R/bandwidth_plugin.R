@@ -1,5 +1,5 @@
-bandwidth_plugin<-function( r, m, x, link = "logit", guessing = 0,
-                               lapsing = 0, K = 2, p = 1, ker = "dnorm" ) {
+bandwidth_plugin<-function( r, m, x, link = c( "logit" ), guessing = 0,
+                               lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ) ) {
 #
 # The function calculates an estimate of the AMISE optimal bandwidth for 
 # a local polynomial estimate of the psychometric function.

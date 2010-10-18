@@ -6,7 +6,7 @@
 \description{Calculates deviance for data Y and fitted values of the psychometric function f}
 
 \usage{
-D<-deviance2(r, m, pfit)
+deviance2(r, m, pfit)
 }
 
 \arguments{
@@ -20,10 +20,10 @@ D<-deviance2(r, m, pfit)
 }
 
 \examples{
-data( "01_Miranda" );
-h = 0.2959;
-fit <- locglmfit( example01$x, example01$r, example01$m, example01$x, h );
-Dev <- deviance2( example01$r, example01$m, fit$fitval );
+data( "01_Miranda" )
+h = 0.2959
+fit <- locglmfit( example01$x, example01$r, example01$m, example01$x, h )
+Dev <- deviance2( example01$r, example01$m, fit$fitval )
 }
 
 \keyword{nonparametric}

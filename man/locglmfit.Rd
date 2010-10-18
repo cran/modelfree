@@ -6,7 +6,7 @@
 \description{Local polynomial estimator for the psychometric function (PF) and eta function (PF transformed by link) for binomial data; also returns the Hat matrix. Actual calculations are done in \code{LOCGLMFIT_PRIVATE} or \code{LOCGLMFIT_SPARSE_PRIVATE} depending on the size of the data set. Here the data are split into several parts to speed up the calculations.}
 
 \usage{
-value<-locglmfit( xfit, r, m, x, h, returnH = FALSE, link = "logit", guessing = 0, lapsing = 0, K = 2, p = 1, ker = "dnorm", maxiter = 50, tol = 1e-6 )
+locglmfit( xfit, r, m, x, h, returnH = FALSE, link = c( "logit" ), guessing = 0, lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ), maxiter = 50, tol = 1e-6 )
 }
 
 \arguments{
@@ -34,10 +34,10 @@ H: hat matrix (OPTIONAL)}
 }
 
 \examples{
-data( "01_Miranda" );
-xnew = 1.2 * (0:99)/99+0.1;
-h <- 0.2959;
-fit <- locglmfit( xnew, example01$r, example01$m, example01$x, h );
+data( "01_Miranda" )
+xnew = 1.2 * (0:99)/99+0.1
+h <- 0.2959
+fit <- locglmfit( xnew, example01$r, example01$m, example01$x, h )
 }
 
 \keyword{nonparametric}

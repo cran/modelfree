@@ -1,7 +1,7 @@
-bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = "logit", guessing = 0,
+bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = c( "logit" ), guessing = 0,
                                lapsing = 0, K = 2, p = 1,
-                               ker = "dnorm", maxiter = 50, tol = 1e-6,
-                               method = "all") {
+                               ker = c( "dnorm" ), maxiter = 50, tol = 1e-6,
+                               method = c( "all" ) ) {
 #
 # The function finds a bootstrap estimate of the optimal bandwidth h for a local polynomial 
 # estimate of the psychometric function with specified guessing and lapsing rates.

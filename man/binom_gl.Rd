@@ -4,7 +4,7 @@
 \description{THIS IS AN INTERNAL FUNCTION: USE \code{BINOM_LIMS} FOR BEST RESULTS. Maximum likelihood estimates of the parameters of psychometric function with guessing and lapsing rates (GLM) or only guessing rate. The estimated parameters for the linear part are in vector b and the estimated limits are in lims.}
 
 \usage{
-values<-binom_gl( r, m, x, link, p, K, initval );
+binom_gl( r, m, x, link, p, K, initval )
 }
 
 \arguments{

@@ -6,7 +6,7 @@
 \description{The function fits a binomial generalised liner model with fixed guessing and lapsing rates}
 
 \usage{
-value <- binomfit_lims( r, m, x, p = 1, link = "logit", guessing = 0, lapsing = 0, K = 2 )
+binomfit_lims( r, m, x, p = 1, link = c( "logit" ), guessing = 0, lapsing = 0, K = 2 )
 }
 
 \arguments{
@@ -17,6 +17,7 @@ value <- binomfit_lims( r, m, x, p = 1, link = "logit", guessing = 0, lapsing = 
 \item{link}{link function; default is "logit"}
 \item{guessing}{guessing rate; default is 0}
 \item{lapsing}{lapsing rate; default is 0}
+\item{K}{power parameter for Weibull and reverse Weibull link; default is 2}
 }
 
 \value{
@@ -26,7 +27,7 @@ fit: glm object to be used in evaluation of fitted values}
 }
 
 \examples{
-data( "01_Miranda" );
+data( "01_Miranda" )
 value <- binomfit_lims( example01$r, example01$m, example01$x )
 }
 
