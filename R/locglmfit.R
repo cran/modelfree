@@ -34,6 +34,29 @@ locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = c( "logit" ),
 # etafit  - estimate of eta (link of pfit)
 # H       - hat matrix (OPTIONAL)
 
+#### 
+# KZ 19-Mar-12
+# changed so that in every call to locglmfit the warnings about zero determinant and exceeded number of 
+# iterations are displayed only once; that is:
+# added a variable Warn which is [0 0] if there are no warnings from private functions, 
+# if the first entry is positive, then a warning about too small a bandwidth is displayed,
+# if the second entry is positive, then a warning about exceeded number of iterations is displayed; 
+# changed the private function acordingly, so that they return the required
+# information
+####
+
+#### 
+# KZ 24-Mar-12
+# the threshold value for which sparse matrices are used in calculations 
+# was chnaged from 15 to 20 as this improved speed
+####
+
+#### 
+# KZ 28-Mar-12
+# included on.exit function which restores warning settings to their
+# original state
+####
+
 # First 5 arguments are mandatory
     if( missing("xfit") || missing("r") || missing("m") || missing("x") || missing("h") ) {
         stop("Check input. First 5 arguments are mandatory");
@@ -81,9 +104,10 @@ locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = c( "logit" ),
     Lxfit <- length(xfit);
     Lx <- length(x);
 
-	 value <- NULL
+	value <- NULL
     pfit <- NULL;
     etafit    <- NULL;
+	Warn <- c(0,0)
     if( returnH  ) H <- NULL;
 
 	if( link == "logit"      ||
@@ -95,14 +119,25 @@ locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = c( "logit" ),
             	
     			link <- paste( link, "_link_private", sep = "" );
 	}
-	
-    if( Lx > 15 ) {
+
+# KZ 28-03-2012 included on.exit routine so that the warning settings are
+# restored when the function terminates even if interrupted by the user
+
+warn.current <- getOption("warn")
+on.exit(options(warn = warn.current));
+
+options(warn=-1)
+
+# KZ 24-03-12
+# changed the threshold value for which sparse matrices 
+# are used to 20 (previously 15) to speed up calculations
+
+    if( Lx > 20 ) {
 # big data
 # First try to load package SparseM
-        options(warn = -1);
+	        options(warn = -1);
         existSparseM <- library( SparseM, logical.return = TRUE );
-        options(warn = 0);
-        if( existSparseM ) {
+         if( existSparseM ) {
             fun_estim <- locglmfit_sparse_private;
         }
         else {
@@ -126,6 +161,7 @@ locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = c( "logit" ),
 
                 value <- fun_estim( xfit, r, m, x, h, returnH, link, guessing,
                        lapsing, K, p, ker, maxiter, tol);
+			Warn <- Warn + value$warncount
             }
             else {
 # large x
@@ -141,6 +177,7 @@ locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = c( "logit" ),
                         pfit <- c( pfit, value1$pfit );
                         etafit    <- c( etafit,    value1$etafit );
                         H      <- rbind(H,   value1$H );
+				Warn <- Warn + value1$warncount
                     }
 # final part of the fit
                     if( ( split * fLx ) < Lxfit ) {
@@ -152,6 +189,7 @@ locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = c( "logit" ),
                         pfit <- c( pfit, value1$pfit );
                         etafit    <- c( etafit,    value1$etafit );
                         H      <- rbind(H,   value1$H );
+				Warn <- Warn + value1$warncount
                     }
 #   values to return
 
@@ -168,6 +206,8 @@ value$H <- H
 
                 value <- fun_estim( xfit, r, m, x, h,returnH, link, guessing,
                        lapsing, K, p, ker, maxiter, tol );
+			Warn <- Warn + value$warncount
+
             }
             else {
 # large x
@@ -184,6 +224,7 @@ value$H <- H
 # put the fits together
                     pfit <- c( pfit, value1$pfit );
                     etafit    <- c( etafit,    value1$etafit );
+			Warn <- Warn + value1$warncount
                 }
 # final part of the fit
                 if( ( split * fLx ) < Lxfit ) {
@@ -193,6 +234,7 @@ value$H <- H
 # put the fits together
                     pfit <- c( pfit, value1$pfit );
                     etafit    <- c( etafit,    value1$etafit );
+				Warn <- Warn + value1$warncount
                 }
            
 #   values to return
@@ -213,7 +255,7 @@ value$etafit <- etafit
 # small x
                 value <- fun_estim( xfit, r, m, x, h, returnH, link, guessing,
                        lapsing, K, p, ker, maxiter, tol );
-                  
+                  Warn <- Warn + value$warncount
             }
             else {
 # large x
@@ -229,6 +271,7 @@ value$etafit <- etafit
                         pfit <- c( pfit, value1$pfit );
                         etafit    <- c( etafit,    value1$etafit );
                         H      <- rbind(H,   value1$H );
+				Warn <- Warn + value1$warncount
                     }
 # final part of the fit
                     if( ( split * fLx ) < Lxfit ) {
@@ -240,6 +283,7 @@ value$etafit <- etafit
                         pfit <- c( pfit, value1$pfit );
                         etafit    <- c( etafit,    value1$etafit );
                         H      <- rbind(H,   value1$H );
+				Warn <- Warn + value1$warncount
                     }
 #   values to return
 
@@ -254,6 +298,7 @@ value$H <- H
 # small x
                 value <- fun_estim( xfit, r, m, x, h, returnH, link, guessing,
                        lapsing, K, p, ker, maxiter, tol );
+			Warn <- Warn + value$warncount
             }
             else {
 # large x
@@ -269,6 +314,7 @@ value$H <- H
 # put the fits together
                     pfit <- c( pfit, value1$pfit );
                     etafit    <- c( etafit,    value1$etafit );
+				Warn <- Warn + value1$warncount
                 }
 # final part of the fit
                 if( ( split * fLx ) < Lxfit ) {
@@ -278,6 +324,7 @@ value$H <- H
 # put the fits together
                     pfit <- c( pfit, value1$pfit );
                     etafit    <- c( etafit,    value1$etafit );
+				Warn <- Warn + value1$warncount
                 }
 
 #   values to return
@@ -289,6 +336,15 @@ value$etafit <- etafit
         } # if( returnH )
         
     } # if( length( h ) == 1 )
+
+# KZ 19-03-12
+# warn user once if there were any warnings generated in the private
+# functions
+
+options(warn = warn.current)
+
+if (Warn[1]) warning('Determinant close to 0: bandwidth is too small')
+if (Warn[2]) warning("iteration limit reached")
 
    return( value )
 }

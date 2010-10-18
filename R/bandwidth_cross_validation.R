@@ -31,6 +31,13 @@ bandwidth_cross_validation<-function( r, m, x, H, link = c( "logit" ),
 # h - cross-validation bandwidth for the chosen "method"; if no "method" is
 # specified, then it has three components: $pscale, $etascale and $deviance 
 
+#### 
+# KZ 28-Mar-12
+# included on.exit function which restores warning settings to their
+# original state
+####
+
+
 # INTERNAL FUNCTIONS
 # LOSS FUNCTION
     ISE <- function( f1, f2 ) {
@@ -148,7 +155,16 @@ bandwidth_cross_validation<-function( r, m, x, H, link = c( "logit" ),
       
     linkfun <- linkuser$linkfun;
 
+
+# KZ 28-03-2012 included on.exit routine so that the warning settings are
+# restored when the function terminates even if interrupted by user
+
+warn.current <- getOption("warn")
+on.exit(options(warn = warn.current));
+
 options(warn=-1)
+
+
 # BANDIWDTH
     h <- NULL;
     if( method == "ISE" ) {
@@ -179,6 +195,7 @@ options(warn=-1)
             }
         }
     }
-		    options(warn=0)
+	
+
     return( h );
 }

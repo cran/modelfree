@@ -1,7 +1,7 @@
-bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = c( "logit" ), guessing = 0,
+bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = c("logit"), guessing = 0,
                                lapsing = 0, K = 2, p = 1,
-                               ker = c( "dnorm" ), maxiter = 50, tol = 1e-6,
-                               method = c( "all" ) ) {
+                               ker = c("dnorm"), maxiter = 50, tol = 1e-6,
+                               method = c("all") ) {
 #
 # The function finds a bootstrap estimate of the optimal bandwidth h for a local polynomial 
 # estimate of the psychometric function with specified guessing and lapsing rates.
@@ -32,7 +32,14 @@ bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = c( "logit" ), 
 # OUTPUT
 # 
 # h - bootstrap bandwidth for the chosen "method"; if no "method" is
-# specified, then it has three components: $pscale, $eta-scale and $deviance 
+# specified, then it has three components: $pscale, $eta-scale and $deviance
+
+#### 
+# KZ 28-Mar-12
+# included on.exit function which restores warning settings to their
+# original state
+####
+ 
 
 # INTERNAL FUNCTIONS
 # LOSS FUNCTION
@@ -115,7 +122,16 @@ bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = c( "logit" ), 
     checkinput( "method", method );
 
     n <- length(x);
+
+# KZ 28-03-2012 included on.exit routine so that the warning settings are
+# restored when the function terminates even if interrupted by user
+
+warn.current <- getOption("warn")
+on.exit(options(warn = warn.current));
+
 options(warn=-1)
+
+
 # OBTAIN INITIAL BANDWIDTH, IF NOT GIVEN
     if( is.null( h0 ) ) {
         h0 <- (1.5 * n^.1) * bandwidth_plugin( r, m, x, link, guessing, lapsing, K, p, ker );
@@ -181,6 +197,6 @@ eta1 <- matrix( rep( f$etafit, N ), n, N );
             }
         }
     }
-    options(warn=0)
+  
     return( h );
 }

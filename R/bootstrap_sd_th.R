@@ -38,6 +38,13 @@ bootstrap_sd_th <- function( TH, r, m, x, N, h0,
 # estimator
 # th0 - threshold estimate
 
+#### 
+# KZ 28-Mar-12
+# included on.exit function which restores warning settings to their
+# original state
+####
+
+
 # MAIN PROGRAM
 # First 6 arguments are mandatory
     if( missing("TH") || missing("r") || missing("m") || missing("x") ||
@@ -103,9 +110,17 @@ bootstrap_sd_th <- function( TH, r, m, x, N, h0,
 
     n <- length( x );
 
+# KZ 28-03-2012 included on.exit routine so that the warning settings are
+# restored when the function terminates even if interrupted by user
+
+warn.current <- getOption("warn")
+on.exit(options(warn = warn.current));
+
+options(warn=-1)
+
 # INITIAL ESTIMATE
 # initial estimates with bandiwdth h0
-options(warn=-1)
+
     f <- locglmfit( x, r, m, x, h0, FALSE, link, guessing, lapsing, K,
                     p, ker, maxiter, tol )$pfit;
 
@@ -147,8 +162,6 @@ options(warn=-1)
                            lapsing, K, p, ker, maxiter, tol )$pfit;
         th_boot[i] <- threshold_slope( ftmp, X, TH )$x_th;
      }
-
-options(warn=0)
 
     sd <- sqrt( var( th_boot ) );
 

@@ -31,6 +31,24 @@ locglmfit_private<-function( xfit, r, m, x, h, returnH, link, guessing,
 #       etafit - estimate of eta (link of pfit)
 #       H      - hat matrix (OPTIONAL)
 
+####
+# KZ 19-Mar-12
+# changed so that in every call to locglmfit the warnings about zero determinant and exceeded number of 
+# iterations are displayed only once; that is:
+# added a variable warncount which is [0 0] if there are no warnings, 
+# first entry =1, if there was a warning about determinant being close to zero, too small bandwidth,
+# second entry =1, if the number of iterations was exceeded; 
+# NOTE that now warncount is returned by this function
+####
+
+####
+# KZ 21-03-12
+# included a try-catch statement to avoid problem cause by singularity; the
+# function returns zeros and NaN instead of crashing; this happens if the
+# bandwidth used is too small to handel the matrix inverse in a normal way
+####
+
+
 # INTERNAL FUNCTIONS
 
 # KERNELS
@@ -139,12 +157,27 @@ locglmfit_private<-function( xfit, r, m, x, h, returnH, link, guessing,
     
     DetXX <- det(t( X ) %*% X)
 
-    if( abs(DetXX) < 1e-14){
-    	stop('Determinant close to 0: bandwidth is too small')
-    	}
-    
-    beta<- solve( t( X ) %*% X,twice=T ) %*% ( t( X ) %*% Y );
+# KZ 19-Mar-12
+# added warning identifier
 
+	warncount <- c(0,0)
+
+    if( abs(DetXX) < 1e-14){
+	warncount[1] <- 1
+    	# warning('Determinant close to 0: bandwidth is too small')
+    	}
+
+# KZ 21-03-12
+# catch errors caused by singularity
+  
+    beta<- try(qr.solve( t( X ) %*% X) %*% ( t( X ) %*% Y ),TRUE);
+
+	if (inherits(beta,"try-error")){
+		 beta <- matrix(-50,nx*(p+1),1)
+		  eta <- X0 %*% beta;
+		value$H <- matrix(NA,nx,nr)	
+	}else{
+  
 # inital values for stopping the loop
     iternum <- 0;
     etadiff <- tol + 1;
@@ -179,8 +212,8 @@ locglmfit_private<-function( xfit, r, m, x, h, returnH, link, guessing,
 # linear estimator
         X <- WK %*% X0;
         Y <- WK %*% z;
-# new estimate of beta
-        beta <- solve( t( X ) %*% X ) %*% ( t( X ) %*% Y );
+# new estimate of beta  
+beta <- qr.solve( t( X ) %*% X ) %*% ( t( X ) %*% Y );
 
 # beta0 (i.e. value of eta function)
         eta1 <- beta[seq(1, (p+1)*nx, by=(p+1))]
@@ -194,19 +227,13 @@ locglmfit_private<-function( xfit, r, m, x, h, returnH, link, guessing,
     }
 
 # warning about exciding iteration max
+# KZ 19-Mar-12
+# added warning identifier
+
     if( maxiter == iternum ) {
-        warning("iteration limit reached");
-    }
-# retrieve beta0 and remove v. large and v. small values
-    etafit <- beta[seq(1, (p+1)*nx, by=(p+1))];
-
-# find estimate of PF
-    pfit <- linki( etafit );
-
-# values to return
-	value$pfit <- pfit
-	value$etafit <- etafit
-	
+	warncount[2] <- 1
+        # warning("iteration limit reached");
+	}
 # Hat matrix
     if( returnH ) {
         tmpH <- solve( t( X ) %*% X ) %*% ( t( X ) %*% WK );
@@ -218,6 +245,17 @@ locglmfit_private<-function( xfit, r, m, x, h, returnH, link, guessing,
         value$H <- H;
     }
 
+}
+# retrieve beta0 and remove v. large and v. small values
+    etafit <- beta[seq(1, (p+1)*nx, by=(p+1))];
+
+# find estimate of PF
+    pfit <- linki( etafit );
+
+# values to return
+	value$pfit <- pfit
+	value$etafit <- etafit
+	value$warncount <- warncount
 
     return( value );
 }

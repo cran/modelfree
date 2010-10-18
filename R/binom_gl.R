@@ -1,4 +1,5 @@
-binom_gl <-function( r, m, x, link, p, K, initval) {
+binom_gl <-function( r, m, x, link, p, K,
+                     initval) {
 #
 # THIS IS AN INTERNAL FUNCTION: USE BINOM_LIMS FOR BEST RESULTS
 #

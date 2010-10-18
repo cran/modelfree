@@ -40,6 +40,13 @@ bootstrap_ci_th <- function( TH, r, m, x, N, h0, alpha = 0.05,
 # ci  - confidence interval based on bootstrap percentiles
 # th0 - threshold estimate
 
+#### 
+# KZ 28-Mar-12
+# included on.exit function which restores warning settings to their
+# original state
+####
+
+
 # MAIN PROGRAM
 # First 6 arguments are mandatory
     if( missing("TH") || missing("r") || missing("m") || missing("x") ||
@@ -113,7 +120,15 @@ bootstrap_ci_th <- function( TH, r, m, x, N, h0, alpha = 0.05,
 
 # INITIAL ESTIMATE
 # initial estimates with bandiwdth h0
+
+# KZ 28-03-2012 included on.exit routine so that the warning settings are
+# restored when the function terminates even if interrupted by user
+
+warn.current <- getOption("warn")
+on.exit(options(warn = warn.current));
+
 options(warn=-1)
+
     f <- locglmfit( x, r, m, x, h0, FALSE, link, guessing, lapsing, K,
                     p, ker, maxiter, tol )$pfit;
 
@@ -151,6 +166,7 @@ options(warn=-1)
 # BOOTSTRAP ESTIMATES OF THE THRESHOLD
 
     for( i in 1:N ) {
+
         ftmp <- locglmfit( X, samp[,i], m, x, h0, FALSE, link, guessing,
                            lapsing, K, p, ker, maxiter, tol )$pfit;
         th_boot[i] <- threshold_slope( ftmp, X, TH )$x_th;
@@ -158,8 +174,6 @@ options(warn=-1)
 
     ci[1] <- quantile( th_boot, probs = alpha / 2 );
     ci[2] <- quantile( th_boot, probs = 1 - alpha / 2 );
-
-options(warn=0)
 
 	value <- NULL
     value$ci <- ci

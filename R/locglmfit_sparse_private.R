@@ -31,6 +31,25 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
 #       etafit - estimate of eta (link of pfit)
 #       H      - hat matrix (OPTIONAL)
 
+####
+# KZ 19-Mar-12
+# changed so that in every call to locglmfit the warnings about zero determinant and exceeded number of 
+# iterations are displayed only once; that is:
+# added a variable warncount which is [0 0] if there are no warnings, 
+# first entry =1, if there was a warning about determinant being close to zero, too small bandwidth,
+# second entry =1, if the number of iterations was exceeded; 
+# NOTE that now warncount is returned by this function
+####
+
+####
+# KZ 22-03-12
+# included a try-catch statement to avoid problem cause by singularity; the
+# function returns zeros and NaN instead of crashing; this happens if the
+# bandwidth used is too small to handel the matrix inverse in a normal way;
+# other minor chnages included for the same reason are anotated in the code
+####
+
+
 # INTERNAL FUNCTIONS
 
 # KERNELS
@@ -105,6 +124,10 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
     	kerx <- eval( call( ker, diffx, 0, h_mat ) );
     }
 
+# KZ 22-03-12
+# remove values which are very close to zero; otherwise inverse crashed in extreme cases
+kerx[which( abs( kerx ) < 1e-100 )] <- 0;
+
 # form a matrix of 1,x,x^2,...,x^p
     tmpX0 <- matrix( rep( diffx, p + 1 ), nr * nx, p + 1 )^
              t( matrix( rep( (0:p) , nr * nx), p + 1, nr * nx ) )
@@ -156,15 +179,35 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
     KM <- rep( r / m, nx );
 # linear estimator
     X <- WK %*% X0;
-    Y <- as.vector( WK %*% Z0 );
-    
-    DetXX <- det(t( X ) %*% X)
-    if( abs(DetXX) < 1e-14){
-    	stop('Determinant close to 0: bandwidth is too small')
-    	}
 
+    Y <- as.vector( WK %*% Z0 );
+
+# KZ 21-03-12
+# added as.matrix below to avoid Inf determinants
+	DetXX <- det(as.matrix(t( X ) %*% X))
+
+# KZ 19-Mar-12
+# added warning identifier
+
+	warncount <- c(0,0)
+
+# KZ 21-03-12
+# catch errors caused by singularity 
+
+    if( (abs(DetXX) < 1e-14) ){
+	warncount[1] <- 1
+    	# warning('Determinant close to 0: bandwidth is too small')
+    	}
+      beta<- try(solve( t( X ) %*% X) %*% ( t( X ) %*% Y ),TRUE);
+
+	if (inherits(beta,"try-error")){
+		 beta <- matrix(-50,nx*(p+1),1)
+		  eta <- X0 %*% beta;
+		value$H <- matrix(NA,nx,nr)	
+	}else{
+  
     
-    beta<- as.vector( as.matrix( solve( t( X ) %*% X ) %*% ( t( X ) %*% Y ) ) );
+    beta<- as.vector( as.matrix( beta ) );
 
 # inital values for stopping the loop
     iternum <- 0;
@@ -179,6 +222,7 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
 
 # FISHER SCORING
     while ( ( iternum < maxiter ) && ( etadiff > tol ) && ( score ) ) {
+
 # obtain values from previous loop
         mu_old <- mu_raw;
         eta_old <- eta;
@@ -203,8 +247,10 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
         X <- WK %*% X0;
         Y <- as.vector( WK %*% z );
 # new estimate of beta
+
         beta <- as.vector( as.matrix(
                 solve( t( X ) %*% X ) %*% ( t( X ) %*% Y) ) );
+
 # beta0 (i.e. value of eta function)
         eta1 <- beta[seq(1, (p+1)*nx, by=(p+1))]
 # new estiate of eta and its derivatives
@@ -217,20 +263,14 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
     }
 
 # warning about exciding iteration max
+# KZ 19-Mar-12
+# added warning identifier
+
     if( maxiter == iternum ) {
-        warning("iteration limit reached");
-    }
+	warncount[2] <- 1
+        # warning("iteration limit reached");
+	}
 
-# retrieve beta0 and remove v. large and v. small values
-    etafit <- beta[seq(1, (p+1)*nx, by=(p+1))];
-
-# find estimate of PF
-    pfit <- linki( etafit );
-
-# values to return
-	value$pfit <- pfit
-	value$etafit <- etafit
-	
 # Hat matrix
     if( returnH ) {
         tmpH <- as.matrix( solve( t( X ) %*% X ) %*% ( t( X ) %*% WK ) );
@@ -241,5 +281,18 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
         }
         value$H <- H;
     }
+}
+# retrieve beta0 and remove v. large and v. small values
+    etafit <- beta[seq(1, (p+1)*nx, by=(p+1))];
+
+# find estimate of PF
+    pfit <- linki( etafit );
+
+
+# values to return
+	value$pfit <- pfit
+	value$etafit <- etafit
+	value$warncount <- warncount
+	
     return( value );
 }
