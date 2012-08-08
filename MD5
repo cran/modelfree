@@ -1,4 +1,4 @@
-f96c4766345782c7c012f95c1613b0c3 *DESCRIPTION
+5f6e35ba03fedff3d81de068e7b7558b *DESCRIPTION
 ae949f365d1275960705dee590bc1e76 *NAMESPACE
 e54cae00dacefd8d0a0a78307277a7f5 *R/bandwidth_bootstrap.R
 6e9a1c69b5856b3164f2c80ed3937156 *R/bandwidth_cross_validation.R
@@ -33,13 +33,13 @@ b1b2d01f2b2befb47eb9f522d94f3bea *R/loglog_link.R
 23eed3dbcc3fa8f58d1532deb7764a38 *R/threshold_slope.R
 6740b315367366c0eb375d725e953f0a *R/weibull_link.R
 efe9c29bc0a7654fd6303f7caa695c7f *R/weibull_link_private.R
-0083559a98da1c0ee209a23fb20b5450 *data/01_Miranda.rda
-8d5abf1f7da5fc609c0a5d7358253732 *data/02_Levi.rda
-a894f8f4e08dacddfff377aa5c58f71b *data/03_Carcagno.rda
-68eef40f533c8c17eb65ce03bd0b6e27 *data/04_Xie.rda
-964a8d83e3e655e82c17abed3e39f89a *data/05_Schofield.rda
-7c2ea123363e744944af0001c7cfa70f *data/06_Nascimento.rda
-eb15cbbbe6df6fad60243260f66107ad *data/07_Baker.rda
+36c5e7df2f556b75d6c8f9f499b3de0a *data/01_Miranda.rda
+972f0bf02a2cbb128a77e63e36b19219 *data/02_Levi.rda
+80bb0757fc41754d72a018ce907b585a *data/03_Carcagno.rda
+0d5dc93276a96a87c8e26e6732ca23b3 *data/04_Xie.rda
+5824ecab3eaea80e052930ad2299b6d3 *data/05_Schofield.rda
+b2107c19888ce1118c98c40a748f4cf0 *data/06_Nascimento.rda
+ad95bc0947137b6f753dd1ec82e89823 *data/07_Baker.rda
 e3e80b0cd76918b9cf553f117b4a80f5 *man/01_Miranda.Rd
 b14b22354f3403cb21104ff275e3f4ff *man/02_Levi.Rd
 ec1c7afdc1518817b10516549d2144d2 *man/03_Carcagno.Rd
