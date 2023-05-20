@@ -16,28 +16,33 @@ checkinput<-function( type, x ) {
     }
 
     checkpsychometricdata<-function( x, r, m, type = 'local' ) {
-    	
+
 # Check format of x and y
 		dimx <- dim(as.matrix(x))
 		dimr <- dim(as.matrix(r))
 		dimm <- dim(as.matrix(m))
-        
-        if ( dimx != dimr || dimx != dimm ) {
+
+
+		if ( (min(dimr)>1) || (min(dimm)>1) ){
+		  stop("Number of trials and successes must be a number or a vector")
+		}
+
+        if ( max(dimx) != max(dimr) || max(dimx) != max(dimm) ) {
             stop( "The number of stimulus levels, successes and trials must be the same" );
         }
-        
-        if( dimx[1] < 2 || dimr[1] < 2 || dimm < 2 ) {
+
+        if( max(dimx) < 2 ) {
             stop( "Minimum number of points is 2" );
         }
-        
+
         if( any( r < 0 ) || any( round( r ) != r )){
         	stop( "Number of successes must be a non-negative integer" )
         	}
-        
+
         if( any( m <= 0 ) || any( round( m ) != m )){
         	stop( "Number of trials must be a positive integer" )
         	}
-        
+
         if( any( r > m ) ) {
             stop( "Number of successes cannot be larger than number of trials" );
         }
@@ -47,15 +52,15 @@ checkinput<-function( type, x ) {
 
     	n <- length(pn[[2]])
     	p <- pn[[1]]
-    	
+
     	if( !is.double(p) ){
             stop( "Degree of polynomial must be a positive scalar" );
         }
-    	
+
         if( p <= 0 || round( p ) != p || length( p ) > 1 ) {
             stop( "Degree of polynomial must be a positive integer" );
         }
-        
+
         if( p >= n){
         	stop('Degree of the polynomial must be less than number of observations')
         	}
@@ -66,7 +71,7 @@ checkinput<-function( type, x ) {
         if( !is.character( LINK ) ) {
             stop( "Argument 'link' must be a character with name of a link function" );
         }
-		
+
         if( LINK != "logit"      &&
             LINK != "probit"     &&
             LINK != "loglog"     &&
@@ -74,24 +79,25 @@ checkinput<-function( type, x ) {
             LINK != "weibull"    &&
             LINK != "revweibull" ) {
             	linkfun = eval(call(LINK,guessing=0,lapsing=0))
-            	if( class(linkfun) != "link-glm" )
+            	if( inherits(linkfun,"link-glm") )
+            	#if( class(linkfun) != "link-glm" )
             		stop( paste( LINK, "is not an allowed link function", sep = " " ) );
         }
     }
 
     checkguessingandlapsing<-function( gl ) {
-    	
+
     	if( any( gl < 0 ) || any( gl >= 1 ) ) {
             stop( "Guessing and lapsing rates must be greater or equal 0 and less than 1" );
         }
-        
+
         if( sum(gl) >= 1 ) {
             stop( "Guessing cannot be greater than nor equal to 1-lapsing" );
         }
     }
 
     checkbootstrapreplications<-function( N ) {
-    	
+
     	if( !is.double(N) ){
             stop( "Number of bootstrap replications must be a positive integer" );
         }
@@ -104,7 +110,7 @@ checkinput<-function( type, x ) {
     	if( !is.double(k) ){
             stop( "Exponent for Weibull or reverse Weibull link function must be a positive scalar" );
         }
-        
+
         if ( length( k ) > 1 || k <= 0 ) {
            stop( "Exponent for Weibull or reverse Weibull link function must be a positive scalar" );
         }
@@ -151,7 +157,7 @@ checkinput<-function( type, x ) {
     	if( !is.double(maxiter) ){
             stop( "Maximum number of iterations must be a positive integer" );
         }
-        
+
         if(  maxiter <= 0 || round( maxiter ) != maxiter || length( maxiter ) > 1 ) {
             stop( "Maximum number of iterations must be a positive integer" );
         }
@@ -161,7 +167,7 @@ checkinput<-function( type, x ) {
     	if( !is.double(tol) ){
             stop( "Tolerance level must be a positive scalar" );
         }
-        
+
         if( length( tol ) > 1 || tol <= 0 ) {
             stop( "Tolerance level must be a positive scalar" );
         }

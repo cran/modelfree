@@ -1,26 +1,28 @@
+#' @import SparseM
+#' @importFrom methods new
 locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
                                     lapsing, K, p, ker, maxiter, tol ) {
 #
 # THIS IS AN INTERNAL FUNCTION: USE LOCGLMFIT FOR BEST RESULTS
 #
-# Local polynomial estimator for the psychometric function and eta function (psychometric function 
-# transformed by link) for binomial data; also returns the hat matrix H. This function is used for 
-# large data sets, i.e. more than 15 observations. 
+# Local polynomial estimator for the psychometric function and eta function (psychometric function
+# transformed by link) for binomial data; also returns the hat matrix H. This function is used for
+# large data sets, i.e. more than 15 observations.
 #
 # INPUT
 #
 # xfit     - points at which to calculate the estimate pfit
 # r        - number of successes at points x
-# m        - number of trials at points x 
-# x        - stimulus levels 
+# m        - number of trials at points x
+# x        - stimulus levels
 # h        - bandwidth(s)
 # returnH  - logical, if TRUE then hat matrix is calculated; default is FALSE
 # link     - name of the link function
 # guessing - guessing rate
 # lapsing  - lapsing rate
 # K    	   - power parameter for Weibull and reverse Weibull link
-# p        - degree of the polynomial 
-# ker      - kernel function for weights 
+# p        - degree of the polynomial
+# ker      - kernel function for weights
 # maxiter  - maximum number of iterations in Fisher scoring
 # tol      - tolerance level at which to stop Fisher scoring
 #
@@ -30,25 +32,6 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
 #       pfit   - value of the local polynomial estimate at points xfit
 #       etafit - estimate of eta (link of pfit)
 #       H      - hat matrix (OPTIONAL)
-
-####
-# KZ 19-Mar-12
-# changed so that in every call to locglmfit the warnings about zero determinant and exceeded number of 
-# iterations are displayed only once; that is:
-# added a variable warncount which is [0 0] if there are no warnings, 
-# first entry =1, if there was a warning about determinant being close to zero, too small bandwidth,
-# second entry =1, if the number of iterations was exceeded; 
-# NOTE that now warncount is returned by this function
-####
-
-####
-# KZ 22-03-12
-# included a try-catch statement to avoid problem cause by singularity; the
-# function returns zeros and NaN instead of crashing; this happens if the
-# bandwidth used is too small to handel the matrix inverse in a normal way;
-# other minor chnages included for the same reason are anotated in the code
-####
-
 
 # INTERNAL FUNCTIONS
 
@@ -89,7 +72,7 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
 
 # MAIN PROGRAM
 # Retrieve link and inverse link functions
- 
+
     if( link != "weibull_link_private" && link != "revweibull_link_private" ) {
         linkuser <- eval( call( link, guessing, lapsing ) );
     }
@@ -100,7 +83,7 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
     linki <- linkuser$linkinv;
 
 # Retrieve derivative of the link function
-    linkd <- linkuser$mu.eta 
+    linkd <- linkuser$mu.eta
 
     nr<-length( r );
     nx<-length( xfit );
@@ -120,13 +103,9 @@ locglmfit_sparse_private<-function( xfit, r, m, x, h, returnH, link, guessing,
         kerx <- eval( call( ker, diffx, 0, h ) );
     }
     else {
-    	h_mat <- as.vector(t( matrix( rep( h, nr ), nx, nr ) ) ) 
+    	h_mat <- as.vector(t( matrix( rep( h, nr ), nx, nr ) ) )
     	kerx <- eval( call( ker, diffx, 0, h_mat ) );
     }
-
-# KZ 22-03-12
-# remove values which are very close to zero; otherwise inverse crashed in extreme cases
-kerx[which( abs( kerx ) < 1e-100 )] <- 0;
 
 # form a matrix of 1,x,x^2,...,x^p
     tmpX0 <- matrix( rep( diffx, p + 1 ), nr * nx, p + 1 )^
@@ -179,35 +158,16 @@ kerx[which( abs( kerx ) < 1e-100 )] <- 0;
     KM <- rep( r / m, nx );
 # linear estimator
     X <- WK %*% X0;
-
     Y <- as.vector( WK %*% Z0 );
 
-# KZ 21-03-12
-# added as.matrix below to avoid Inf determinants
-	DetXX <- det(as.matrix(t( X ) %*% X))
-
-# KZ 19-Mar-12
-# added warning identifier
-
-	warncount <- c(0,0)
-
-# KZ 21-03-12
-# catch errors caused by singularity 
-
-    if( (abs(DetXX) < 1e-14) ){
-	warncount[1] <- 1
-    	# warning('Determinant close to 0: bandwidth is too small')
+    Xmat = as.matrix(X)
+    DetXX <- det(t( Xmat ) %*% Xmat)
+    if( abs(DetXX) < 1e-14){
+    	stop('Determinant close to 0: bandwidth is too small')
     	}
-      beta<- try(solve( t( X ) %*% X) %*% ( t( X ) %*% Y ),TRUE);
 
-	if (inherits(beta,"try-error")){
-		 beta <- matrix(-50,nx*(p+1),1)
-		  eta <- X0 %*% beta;
-		value$H <- matrix(NA,nx,nr)	
-	}else{
-  
-    
-    beta<- as.vector( as.matrix( beta ) );
+
+    beta<- as.vector( as.matrix( solve( t( X ) %*% X ) %*% ( t( X ) %*% Y ) ) );
 
 # inital values for stopping the loop
     iternum <- 0;
@@ -222,7 +182,6 @@ kerx[which( abs( kerx ) < 1e-100 )] <- 0;
 
 # FISHER SCORING
     while ( ( iternum < maxiter ) && ( etadiff > tol ) && ( score ) ) {
-
 # obtain values from previous loop
         mu_old <- mu_raw;
         eta_old <- eta;
@@ -247,10 +206,8 @@ kerx[which( abs( kerx ) < 1e-100 )] <- 0;
         X <- WK %*% X0;
         Y <- as.vector( WK %*% z );
 # new estimate of beta
-
         beta <- as.vector( as.matrix(
                 solve( t( X ) %*% X ) %*% ( t( X ) %*% Y) ) );
-
 # beta0 (i.e. value of eta function)
         eta1 <- beta[seq(1, (p+1)*nx, by=(p+1))]
 # new estiate of eta and its derivatives
@@ -263,13 +220,19 @@ kerx[which( abs( kerx ) < 1e-100 )] <- 0;
     }
 
 # warning about exciding iteration max
-# KZ 19-Mar-12
-# added warning identifier
-
     if( maxiter == iternum ) {
-	warncount[2] <- 1
-        # warning("iteration limit reached");
-	}
+        warning("iteration limit reached");
+    }
+
+# retrieve beta0 and remove v. large and v. small values
+    etafit <- beta[seq(1, (p+1)*nx, by=(p+1))];
+
+# find estimate of PF
+    pfit <- linki( etafit );
+
+# values to return
+	value$pfit <- pfit
+	value$etafit <- etafit
 
 # Hat matrix
     if( returnH ) {
@@ -281,18 +244,5 @@ kerx[which( abs( kerx ) < 1e-100 )] <- 0;
         }
         value$H <- H;
     }
-}
-# retrieve beta0 and remove v. large and v. small values
-    etafit <- beta[seq(1, (p+1)*nx, by=(p+1))];
-
-# find estimate of PF
-    pfit <- linki( etafit );
-
-
-# values to return
-	value$pfit <- pfit
-	value$etafit <- etafit
-	value$warncount <- warncount
-	
     return( value );
 }

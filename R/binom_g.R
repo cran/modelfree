@@ -1,16 +1,17 @@
+#' @importFrom stats optim
 binom_g<-function( r, m, x, link, p, K,
                       initval ) {
 #
 # THIS IS AN INTERNAL FUNCTION: USE BINOM_LIMS FOR BEST RESULTS
 #
-# Maximum likelihood estimates of the parameters of the psychometric 
-# function with guessing rate. The estimated parameters for the linear 
+# Maximum likelihood estimates of the parameters of the psychometric
+# function with guessing rate. The estimated parameters for the linear
 # part are in vector 'b' and the estimated guessing rate is 'guessing'.
 #
 # INPUT
 #
 # r    - number of successes at points x
-# m    - number of trials at points x 
+# m    - number of trials at points x
 # x    - stimulus levels
 # link    - name of the link function
 # p       - degree of the polynomial
@@ -18,9 +19,9 @@ binom_g<-function( r, m, x, link, p, K,
 # initval - initial value for guessing
 #
 # OUTPUT
-# 
-# Object with 3 components: 
-# b - vector of estiamted coefficients for the linear part 
+#
+# Object with 3 components:
+# b - vector of estiamted coefficients for the linear part
 # guessing - estimated guessing rate
 # fit - glm object to be used in evaluation of fitted values
 
@@ -29,7 +30,7 @@ binom_g<-function( r, m, x, link, p, K,
 
         guessing <- 1 / ( 1 + exp( -guessing ) );
         lapsing <- 0;
-  
+
 # fit
         if( linkfun != "weibull_link_private" && linkfun != "revweibull_link_private" ) {
             fit <- glm( glmformula, data = glmdata, weights = m,
@@ -52,7 +53,7 @@ binom_g<-function( r, m, x, link, p, K,
 # MAIN PROGRAM
 
     initval <- log( initval / ( 1 - initval ) );
-    
+
 # GLM settings
     glmdata <- data.frame( cbind( r/m , m , x ) );
     names( glmdata ) <- c( "resp", "m", "x" );
@@ -89,17 +90,17 @@ binom_g<-function( r, m, x, link, p, K,
         tmpglm <- glm( glmformula, data = glmdata, weights = m,
                  family = binomial( eval( call( linkfun, K, guessing, lapsing ) ) ) );
     }
-    
+
 	b <- tmpglm$coeff
-    
+
     tmpglm$df.residual <- length(x) - (p + 1) - 1
-    
+
     fit <- tmpglm
-    
+
     value <- NULL
     value$guessing <- guessing
     value$b <- b
     value$fit <- fit
-    
+
     return( value );
 }

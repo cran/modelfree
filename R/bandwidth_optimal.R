@@ -1,18 +1,19 @@
-bandwidth_optimal<-function( ptrue, r, m, x, H, link = c( "logit" ), guessing = 0,
-                             lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ),
-                             maxiter = 50, tol = 1e-6, method = c( "all" ) ) {
+#' @importFrom stats optimize
+bandwidth_optimal<-function( ptrue, r, m, x, H, link = "logit", guessing = 0,
+                             lapsing = 0, K = 2, p = 1, ker = "dnorm",
+                             maxiter = 50, tol = 1e-6, method = "all" ) {
 #
-# Finds the optimal bandwidth for a local polynomial estimate of the psychometric 
-# function with specified guessing and lapsing rates. The difference between this function 
+# Finds the optimal bandwidth for a local polynomial estimate of the psychometric
+# function with specified guessing and lapsing rates. The difference between this function
 # and bandwidth_cross_validation is that here the true psychometric function is known.
-# 
+#
 # INPUT
-# 
-# ptrue    - the true function; vector with the value of the true psychometric function at 
+#
+# ptrue    - the true function; vector with the value of the true psychometric function at
 #		each stimulus level x
 # r    - number of successes at points x
-# m    - number of trials at points x 
-# x    - stimulus levels 
+# m    - number of trials at points x
+# x    - stimulus levels
 # H    - search interval
 #
 # OPTIONAL INPUT
@@ -29,9 +30,9 @@ bandwidth_optimal<-function( ptrue, r, m, x, H, link = c( "logit" ), guessing = 
 # 'ISEeta', 'ISE', 'deviance'; by default all possible values are calculated
 #
 # OUTPUT
-# 
+#
 # h - optimal bandwidth for the chosen "method"; if no "method" is
-# specified, then it has three components: $pscale, $eta-scale and $deviance 
+# specified, then it has three components: $pscale, $eta-scale and $deviance
 
 # INTERNAL FUNCTIONS
 # LOSS FUNCTION
@@ -60,7 +61,7 @@ bandwidth_optimal<-function( ptrue, r, m, x, H, link = c( "logit" ), guessing = 
 # this is a nested function, so it shares variables!
     get_dev <- function( h ) {
         ftmp <- locglmfit( x, r, m, x, h, FALSE, link, guessing, lapsing,
-                           K, p, ker, maxiter, tol ); 
+                           K, p, ker, maxiter, tol );
 # return MISE for this h
         D = return( deviance2( ptrue * m, m, ftmp$pfit ) );
     }
@@ -111,7 +112,7 @@ bandwidth_optimal<-function( ptrue, r, m, x, H, link = c( "logit" ), guessing = 
         link == "comploglog" ||
         link == "weibull"    ||
         link == "revweibull" ) {
-            	
+
     			LINK <- paste( link, "_link_private", sep = "" );
 	}else{
 		LINK <- link
@@ -120,14 +121,14 @@ bandwidth_optimal<-function( ptrue, r, m, x, H, link = c( "logit" ), guessing = 
     if( LINK != "weibull_link_private" && LINK != "revweibull_link_private" ) {
 
         linkuser <- eval( call( LINK, guessing, lapsing ) );
-        
+
     }
     else{
 
        	linkuser <- eval( call( LINK, K,  guessing, lapsing ) );
 
     }
-      
+
     linkfun <- linkuser$linkfun;
 
 options(warn=-1)

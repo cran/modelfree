@@ -1,25 +1,27 @@
 Package: modelfree
-Type: Package
-Version: 1.1-1
-Date: 08/08/2012
-Title: Model-free estimation of a psychometric function
-Author: Ivan Marin-Franch <imarinfr@indiana.edu>, Kamila Zychaluk
-        <kamila.zychaluk@liverpool.ac.uk>, and David H. Foster
-        <d.h.foster@manchester.ac.uk>
-Maintainer: Kamila Zychaluk <kamila.zychaluk@liverpool.ac.uk>
-Depends: R (>= 2.8.1), PolynomF (>= 0.93), SparseM (>= 0.79), stats,
-        utils, base
-LazyLoad: yes
-LazyData: yes
-Description: Local linear estimation of psychometric functions.
-        Provides functions for nonparametric estimation of a
-        psychometric function and for estimation of a derived threshold
-        and slope, and their standard deviations and confidence
-        intervals
-URL: http://www.modelfree.manchester.ac.uk,
-        http://www.modelfree.liv.ac.uk,
-        http://modelfree.r-forge.r-project.org/
-License: GPL (>= 2)
-Packaged: 2012-08-09 12:50:21 UTC; zychaluk
+Title: Model-Free Estimation of a Psychometric Function
+Version: 1.2
+Authors@R: c(
+    person("Ivan", "Marin-Franch", , "imarinfr@optocom.es", role = c("aut"),
+           comment = c(ORCID = "0000-0001-7079-6874")),
+    person("Kamila", "Zychaluk", , "Kamila.Zychaluk@liverpool.ac.uk", role = c("aut", "cre","cph")),
+    person("David H.", "Foster", , "d.h.foster@manchester.ac.uk", role = c("aut"),
+           comment = c(ORCID = "0000-0003-2428-715X"))
+        )       
+Description: Local linear estimation of psychometric functions. Provides functions for nonparametric estimation of a psychometric function and for estimation of a derived threshold and slope, and their standard deviations and confidence intervals.
+URL: www.R-project.org,
+        https://personalpages.manchester.ac.uk/staff/d.h.foster/software-modelfree/latest/home.html
+License: LGPL (>= 3)
+Encoding: UTF-8
+RoxygenNote: 7.2.3
+Imports: SparseM, PolynomF, methods
+Depends: R (>= 2.10)
+LazyData: true
+NeedsCompilation: no
+Packaged: 2023-05-19 17:24:41 UTC; kamil
+Author: Ivan Marin-Franch [aut] (<https://orcid.org/0000-0001-7079-6874>),
+  Kamila Zychaluk [aut, cre, cph],
+  David H. Foster [aut] (<https://orcid.org/0000-0003-2428-715X>)
+Maintainer: Kamila Zychaluk <Kamila.Zychaluk@liverpool.ac.uk>
 Repository: CRAN
-Date/Publication: 2012-08-09 14:45:26
+Date/Publication: 2023-05-20 07:40:02 UTC

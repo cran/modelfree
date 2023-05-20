@@ -1,3 +1,16 @@
+#' Complementary log-log link with guessing and lapsing rates
+#
+#' Creates a complementary log-log link function; the guessing rate and lapsing rate are fixed, hence link is
+#' a function of only one variable.
+#
+# OPTIONAL INPUT
+#
+#' @param guessing (optional) guessing rate; default is 0
+#' @param lapsing (optional) lapsing rate; default is 0
+#
+# OUTPUT
+#
+#' @returns link complementary log-log link for use in all GLM functions
 comploglog_link <- function( guessing = 0, lapsing = 0 ) {
 #
 # Complementary log-log link for use with GLM functions

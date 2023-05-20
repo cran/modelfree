@@ -1,16 +1,83 @@
-bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = c("logit"), guessing = 0,
-                               lapsing = 0, K = 2, p = 1,
-                               ker = c("dnorm"), maxiter = 50, tol = 1e-6,
-                               method = c("all") ) {
+#' Bootstrap bandwidth for local polynomial estimator of a psychometric function
+#'
+#' This function finds a bootstrap estimate of the optimal bandwidth h for a local polynomial
+#' estimate of the psychometric function with specified guessing and lapsing rates.
+#'
+#' @usage bandwidth_bootstrap( r, m, x, H, N, h0 = NULL, link = "logit",
+#'                      guessing = 0, lapsing = 0, K = 2, p = 1,
+#'                      ker = "dnorm", maxiter = 50, tol = 1e-6, method = "all")
+#'
+# INPUT
 #
-# The function finds a bootstrap estimate of the optimal bandwidth h for a local polynomial 
+#' @param  r number of successes at points x
+#' @param  m  number of trials at points x
+#' @param  x  stimulus levels
+#' @param  H  search interval
+#' @param  N number of bootstrap replications
+#
+# OPTIONAL INPUT
+#
+#' @param  h0 (optional) pilot bandwidth; if not specified, then the scaled plug-in bandwidth is used
+#' @param  link (optional) name of the link function to be used; default is "logit"
+#' @param  guessing (optional) guessing rate; default is 0
+#' @param  lapsing  (optional) lapsing rate; default is 0
+#' @param  K    (optional) power parameter for Weibull and reverse Weibull link; default is 2
+#' @param  p     (optional) degree of the polynomial; default is 1
+#' @param  ker   (optional) kernel function for weights; default is "dnorm"
+#' @param  maxiter (optional) maximum number of iterations in Fisher scoring; default is 50
+#' @param  tol      (optional) tolerance level at which to stop Fisher scoring; default is 1e-6
+#' @param  method   (optional) loss function to be used in bootstrap: choose from: "ISEeta", "ISE", "deviance"; by default all possible values are calculated
+#
+# OUTPUT
+#
+#' @returns  \verb{h  } bootstrap bandwidth for the chosen "method"; if no "method" is specified, then it has three components: $pscale, $eta-scale and $deviance
+#' @importFrom stats rbinom optimize
+#'
+#' @examples
+#' data("Baker_etal")
+#' x = Baker_etal$x
+#' r = Baker_etal$r
+#' m = Baker_etal$m
+#' plot( x, r / m, xlim = c( 0.16, 7.83 ), ylim = c( -0.01, 1.01 ), type = "p", pch="*" )
+#' val <- binomfit_lims( r, m, x, link = "probit" )
+#' numxfit <- 199; # Number of new points to be generated minus 1
+#' xfit <- (max(x)-min(x)) * (0:numxfit) / numxfit + min(x)
+#' # Plot the fitted curve
+#' pfit<-predict( val$fit, data.frame( x = xfit ), type = "response" )
+#' lines(xfit, pfit )
+#' @examples
+#' \dontrun{
+#' data("Miranda_Henson")
+#' x = Miranda_Henson$x
+#' r = Miranda_Henson$r
+#' m = Miranda_Henson$m
+#' numxfit <- 199; # Number of new points to be generated minus 1
+#' xfit <- (max(x)-min(x)) * (0:numxfit) / numxfit + min(x)
+#' # Find a cross-validation bandwidth
+#' bwd_min <- min( diff( x ) )
+#' bwd_max <- max( x ) - min( x )
+#' # This might take a few minutes
+#' niter <- 500 # Note number of bootstrap iterations should be at least 500
+#' bwd <- bandwidth_bootstrap( r, m, x, c( bwd_min, bwd_max ),niter, method="deviance")
+#' pfit <- locglmfit( xfit, r, m, x, bwd )$pfit
+#' # Plot the fitted curve
+#' plot( x, r / m, xlim = c( 0.1, 1.302 ), ylim = c( 0.0165, 0.965 ), type = "p", pch="*" )
+#' lines(xfit, pfit )
+#' }
+#' @export
+bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = "logit", guessing = 0,
+                               lapsing = 0, K = 2, p = 1,
+                               ker = "dnorm", maxiter = 50, tol = 1e-6,
+                               method = "all") {
+#
+# The function finds a bootstrap estimate of the optimal bandwidth h for a local polynomial
 # estimate of the psychometric function with specified guessing and lapsing rates.
 #
 # INPUT
-# 
+#
 # r    - number of successes at points x
-# m    - number of trials at points x 
-# x    - stimulus levels 
+# m    - number of trials at points x
+# x    - stimulus levels
 # H    - search interval
 # N    - number of bootstrap replications
 #
@@ -30,16 +97,9 @@ bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = c("logit"), gu
 # "ISEeta", "ISE", "deviance"; by default all possible values are calculated
 #
 # OUTPUT
-# 
+#
 # h - bootstrap bandwidth for the chosen "method"; if no "method" is
 # specified, then it has three components: $pscale, $eta-scale and $deviance
-
-#### 
-# KZ 28-Mar-12
-# included on.exit function which restores warning settings to their
-# original state
-####
- 
 
 # INTERNAL FUNCTIONS
 # LOSS FUNCTION
@@ -100,7 +160,7 @@ bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = c("logit"), gu
     if( !is.null( h0 ) ) {
         checkinput( "bandwidth", h0 );
     }
-    
+
     checkinput( "linkfunction", link );
     if( length( guessing ) > 1 ) {
         stop( "Guessing rate must be a scalar" );
@@ -122,16 +182,7 @@ bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = c("logit"), gu
     checkinput( "method", method );
 
     n <- length(x);
-
-# KZ 28-03-2012 included on.exit routine so that the warning settings are
-# restored when the function terminates even if interrupted by user
-
-warn.current <- getOption("warn")
-on.exit(options(warn = warn.current));
-
 options(warn=-1)
-
-
 # OBTAIN INITIAL BANDWIDTH, IF NOT GIVEN
     if( is.null( h0 ) ) {
         h0 <- (1.5 * n^.1) * bandwidth_plugin( r, m, x, link, guessing, lapsing, K, p, ker );
@@ -178,7 +229,7 @@ eta1 <- matrix( rep( f$etafit, N ), n, N );
              h <- optimize( get_ise, lower = H[1], upper = H[2] )$minimum;
          }
          else {
-             if( method == "likelihood" ) {
+             if( method == "deviance" ) {
 # DEVIANCE
                  h <- optimize( get_dev, lower = H[1], upper = H[2] )$minimum;
              }
@@ -186,7 +237,7 @@ eta1 <- matrix( rep( f$etafit, N ), n, N );
 # p-scale
                  h$pscale   <- optimize( get_ise_p, lower = H[1], upper = H[2]
                                )$minimum;
-                            
+
 # eta scale
                  h$etascale <- optimize( get_ise, lower = H[1], upper = H[2]
                                )$minimum;
@@ -197,6 +248,6 @@ eta1 <- matrix( rep( f$etafit, N ), n, N );
             }
         }
     }
-  
+    options(warn=0)
     return( h );
 }

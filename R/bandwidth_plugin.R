@@ -1,17 +1,60 @@
-bandwidth_plugin<-function( r, m, x, link = c( "logit" ), guessing = 0,
-                               lapsing = 0, K = 2, p = 1, ker = c( "dnorm" ) ) {
+#' Plug-in bandwidth for local polynomial estimator of a psychometric function
+#'
+#' The function calculates an estimate of the AMISE optimal bandwidth for
+#' a local polynomial estimate of the psychometric function.
+#'
+#' @usage bandwidth_plugin( r, m, x, link = "logit", guessing = 0,
+#'                    lapsing = 0, K = 2, p = 1, ker = "dnorm" )
 #
-# The function calculates an estimate of the AMISE optimal bandwidth for 
+# INPUT
+#
+#' @param  r     number of successes at points x
+#' @param  m     number of trials at points x
+#' @param  x     stimulus levels
+#
+# OPTIONAL INPUT
+#
+#' @param  link     (optional) name of the link function to be used; default is "logit"
+#' @param  guessing (optional) guessing rate; default is 0
+#' @param  lapsing  (optional) lapsing rate; default is 0
+#' @param  K    (optional) power parameter for Weibull and reverse Weibull link; default is 2
+#' @param  p        (optional) degree of the polynomial; default is 1
+#' @param  ker      (optional) kernel function for weights; default is "dnorm"
+#
+# OUTPUT
+#
+#' @returns  \verb{h  } plug-in bandwidth (ISE optimal on eta-scale)
+#' @importFrom stats integrate predict glm binomial deriv coefficients
+#' @importFrom PolynomF polynom
+#'
+#' @examples
+#' data("Miranda_Henson")
+#' x = Miranda_Henson$x
+#' r = Miranda_Henson$r
+#' m = Miranda_Henson$m
+#' numxfit <- 199; # Number of new points to be generated minus 1
+#' xfit <- (max(x)-min(x)) * (0:numxfit) / numxfit + min(x)
+#' # Find a plug-in bandwidth
+#' bwd <- bandwidth_plugin( r, m, x)
+#' pfit <- locglmfit( xfit, r, m, x, bwd )$pfit
+#' # Plot the fitted curve
+#' plot( x, r / m, xlim = c( 0.1, 1.302 ), ylim = c( 0.0165, 0.965 ), type = "p", pch="*" )
+#' lines(xfit, pfit )
+#' @export
+bandwidth_plugin<-function( r, m, x, link = "logit", guessing = 0,
+                               lapsing = 0, K = 2, p = 1, ker = "dnorm" ) {
+#
+# The function calculates an estimate of the AMISE optimal bandwidth for
 # a local polynomial estimate of the psychometric function.
 #
 # INPUT
-# 
+#
 # r    - number of successes at points x
-# m    - number of trials at points x 
-# x    - stimulus levels 
+# m    - number of trials at points x
+# x    - stimulus levels
 #
 # OPTIONAL INPUT
-# 
+#
 # link     - name of the link function to be used; default is "logit"
 # guessing - guessing rate; default is 0
 # lapsing  - lapsing rate; default is 0
@@ -20,7 +63,7 @@ bandwidth_plugin<-function( r, m, x, link = c( "logit" ), guessing = 0,
 # ker      - kernel function for weights; default is "dnorm"
 #
 # OUTPUT
-# 
+#
 # h - plug-in bandwidth (ISE optimal on eta-scale)
 
 # INTERNAL FUNCTIONS
@@ -59,8 +102,8 @@ bandwidth_plugin<-function( r, m, x, link = c( "logit" ), guessing = 0,
         X <- x;
         return( ( abs( X ) <= 1 ) / 2 );
     }
-    
-    
+
+
 # EQUIVALENT KERNEL
 ker_eqv <- function( x, deg = p, K = ker, S1 = S ) {
     K2 <- NULL;
@@ -122,11 +165,11 @@ ker_eqv2 <- function( x, deg = p, K = ker, S1 = S ) {
         stop( "Lapsing rate must be a scalar" );
     }
     checkinput( "guessingandlapsing", c( guessing, lapsing ) );
-   
+
     if (link == "weibull" || link == "revweibull"){
 	    checkinput( "exponentk", K );
 	    }
-    
+
     n <- length(r);
 
 # p+Dp - degree of polynomial used for parametric fit
@@ -139,7 +182,7 @@ ker_eqv2 <- function( x, deg = p, K = ker, S1 = S ) {
         }
         else {
             if ( ( n - p ) > 2 ) {
-                Dp = 1; 
+                Dp = 1;
             }
             else {
                 stop( paste( "Not enough data to fit polynomial of degree", p,
@@ -167,7 +210,7 @@ ker_eqv2 <- function( x, deg = p, K = ker, S1 = S ) {
         }
     }
 # fit
-    if( ( link == "weibull"    ) || 
+    if( ( link == "weibull"    ) ||
         ( link == "revweibull" ) ) {
         linkfun <- get( paste( link, "_link_private", sep = "" ) );
         fit <- glm( glmformula, data = glmdata, weights = m,
@@ -178,7 +221,7 @@ ker_eqv2 <- function( x, deg = p, K = ker, S1 = S ) {
         link == "probit"     ||
         link == "loglog"     ||
         link == "comploglog" ){
-        	
+
         	linkfun <- get( paste( link, "_link_private", sep = "" ) );
         	fit <- glm( glmformula, data = glmdata, weights = m,
                     family = binomial( linkfun( guessing, lapsing ) ) );
@@ -228,16 +271,16 @@ if (any(!is.finite(fit$coefficients)) ) stop('Result is degenerate: the link fun
 # FUNCTIONS OF THE EQUIVALENT KERNEL
 # integral of squared equivalent kernel
     k2 <- integrate( ker_eqv2, -Inf, Inf, deg = p, K = ker )$value;
-# (p+1)th moment of equivalent kernel 
+# (p+1)th moment of equivalent kernel
     muK_2 <- moments( "ker_eqv", p + 1 )^2;
-    
+
  if( muK_2 == 0 ) {
         muK_2 <- .Machine$double.eps;
     }
 # INTEGRAL OF VARIANCE FUNCTION
     int_sg <- integrate( varfun, min( x ) - 1, max( x ) + 1 )$value;
 # ensure the above integral is positive which might not be the case for
-# near degenerate samples; issue warning 
+# near degenerate samples; issue warning
     if( int_sg == 0 ) {
         int_sg <- .Machine$double.eps;
         warning("The estimated value was 0; sample is probably degenerate");

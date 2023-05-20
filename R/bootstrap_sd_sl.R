@@ -1,26 +1,78 @@
+#' Bootstrap standard deviation for the slope of a psychometric function
+#'
+#' The function finds a bootstrap estimate of the standard deviation of the estimated
+#' slope for the local polynomial estimate of the psychometric function with guessing
+#' and lapsing rates.
+#'
+#' @usage bootstrap_sd_sl( TH, r, m, x, N, h0, X = (max(x)-min(x))*(0:999)/999+min(x),
+#'                  link = "logit", guessing = 0, lapsing = 0, K = 2, p = 1,
+#'                  ker = "dnorm", maxiter = 50, tol = 1e-6 )
+#
+# INPUT
+#
+#' @param TH required threshold level
+#' @param r number of successes at points x
+#' @param m number of trials at points x
+#' @param x stimulus levels
+#' @param N number of bootstrap replications; N should be at least 200 for reliable results
+#' @param h0 bandwidth
+#
+# OPTIONAL INPUT
+#
+#' @param X (optional) set of values at which estimates of the psychometric function for the slope estimation are to be obtained; if not given, 1000 equally spaced points from minimum to maximum of x are used
+#' @param link (optional) name of the link function; default is "logit"
+#' @param guessing (optional) guessing rate; default is 0
+#' @param lapsing (optional) lapsing rate; default is 0
+#' @param K   (optional) power parameter for Weibull and reverse Weibull link; default is 2
+#' @param p     (optional) degree of the polynomial; default is 1
+#' @param ker     (optional) kernel function for weights; default is "dnorm"
+#' @param maxiter (optional) maximum number of iterations in Fisher scoring; default is 50
+#' @param tol      (optional) tolerance level at which to stop Fisher scoring; default is 1e-6
+#
+# OUTPUT
+#
+#' @returns  \verb{sd   } bootstrap estimate of the standard deviation of the slope estimator
+#' @returns  \verb{sl0  } slope estimate
+#'
+#' @examples
+#' \dontrun{
+#' data("Miranda_Henson")
+#' x = Miranda_Henson$x
+#' r = Miranda_Henson$r
+#' m = Miranda_Henson$m
+#' bwd_min <- min( diff( x ) )
+#' bwd_max <- max( x ) - min( x )
+#' bwd <- bandwidth_cross_validation( r, m, x, c( bwd_min, bwd_max ), method = "deviance" )
+#' prob <- 0.5 # Required threshold level
+#' # This might take a few minutes
+#' niter <- 200 # Note number of bootstrap iterations should be at least 200
+#' sd_sl <- bootstrap_sd_sl( prob, r, m, x, niter, bwd ) # Be patient, slow process
+#' }
+#' @importFrom stats var
+#' @export
 bootstrap_sd_sl <- function( TH, r, m, x, N, h0,
                              X = (max(x)-min(x))*(0:999)/999+min(x),
-                             link = c( "logit" ), guessing = 0, lapsing = 0,
-                             K = 2, p = 1, ker = c( "dnorm" ), maxiter = 50,
+                             link = "logit", guessing = 0, lapsing = 0,
+                             K = 2, p = 1, ker = "dnorm", maxiter = 50,
                              tol = 1e-6 ) {
 #
-# The function finds a bootstrap estimate of the standard deviation of the estimated 
-# slope for the local polynomial estimate of the psychometric function with guessing 
+# The function finds a bootstrap estimate of the standard deviation of the estimated
+# slope for the local polynomial estimate of the psychometric function with guessing
 # and lapsing rates.
 #
 # INPUT
 #
 # TH   - required threshold level
 # r    - number of successes at points x
-# m    - number of trials at points x 
-# x    - stimulus levels 
-# N    - number of bootstrap replications; N should be at least 200 for reliable results 
+# m    - number of trials at points x
+# x    - stimulus levels
+# N    - number of bootstrap replications; N should be at least 200 for reliable results
 # h0   - bandwidth
 #
 # OPTIONAL INPUT
 #
-# X        - set of values at which estimates of the psychometric function for the slope 
-#		estimation are to be obtained; if not given, 1000 equally spaced points from 
+# X        - set of values at which estimates of the psychometric function for the slope
+#		estimation are to be obtained; if not given, 1000 equally spaced points from
 #		minimum to maximum of x are used
 # link     - name of the link function; default is "logit"
 # guessing - guessing rate; default is 0
@@ -32,18 +84,11 @@ bootstrap_sd_sl <- function( TH, r, m, x, N, h0,
 # tol      - tolerance level at which to stop Fisher scoring; default is 1e-6
 #
 # OUTPUT
-# 
-# Object with 2 components: 
+#
+# Object with 2 components:
 # sd  - bootstrap estimate of the standard deviation of the slope
 # estimator
 # sl0 - slope estimate
-
-#### 
-# KZ 28-Mar-12
-# included on.exit function which restores warning settings to their
-# original state
-####
-
 
 # MAIN PROGRAM
 # First 6 arguments are mandatory
@@ -65,7 +110,7 @@ bootstrap_sd_sl <- function( TH, r, m, x, N, h0,
     rm( checkdata )
 
     checkinput( "bootstrapreplications", N );
-    
+
 
     if( !is.vector( X ) ) {
         stop("X (values where to estimate the PF) has to be a vector");
@@ -87,7 +132,7 @@ bootstrap_sd_sl <- function( TH, r, m, x, N, h0,
         stop( "Lapsing rate must be scalar" );
     }
     checkinput( "guessingandlapsing", c( guessing, lapsing ) );
-    
+
     if( any( TH <= guessing )) {
         stop( "Threshold level should be greater than guessing rate" );
     }
@@ -113,15 +158,7 @@ bootstrap_sd_sl <- function( TH, r, m, x, N, h0,
 
 # INITIAL ESTIMATE
 # initial estimates with bandiwdth h0
-
-# KZ 28-03-2012 included on.exit routine so that the warning settings are
-# restored when the function terminates even if interrupted by user
-
-warn.current <- getOption("warn")
-on.exit(options(warn = warn.current));
-
 options(warn=-1)
-
     f <- locglmfit( x, r, m, x, h0, FALSE, link, guessing, lapsing, K,
                     p, ker, maxiter, tol )$pfit;
 
@@ -164,10 +201,12 @@ options(warn=-1)
         sl_boot[i] <- threshold_slope( ftmp, X, TH )$slope;
      }
 
+options(warn=0)
+
     sd <- sqrt( var(sl_boot ) );
 	value <- NULL
     value$sd <- sd
     value$sl0 <- sl0
-    
+
     return( value );
 }

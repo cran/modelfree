@@ -1,3 +1,16 @@
+#' Log-log link with guessing and lapsing rates
+#'
+#' Creates a log-log link function; the guessing rate and lapsing rate are fixed, hence link is
+#' a function of only one variable.
+#
+# OPTIONAL INPUT
+#
+#' @param guessing (optional) guessing rate; default is 0
+#' @param lapsing (optional) lapsing rate; default is 0
+#
+# OUTPUT
+#
+#' @returns link log-log link for use in all GLM functions
 loglog_link <-function( guessing = 0, lapsing = 0 ) {
 #
 # Log-log link for use with GLM functions

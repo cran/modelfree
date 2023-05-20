@@ -1,3 +1,4 @@
+#' @importFrom stats qnorm pnorm dnorm
 probit_link_private <-function( guessing, lapsing ) {
 
 #
