@@ -5,7 +5,7 @@
 Discrimination of pitch
 }
 \description{
-The subject had to identify the interval containing a tone whose fundamental frequency was different from that in the other two intervals. The symbols in the figure below show the proportion of correct responses as the difference between the tones varied. There were 3–49 trials at each stimulus level. See https://personalpages.manchester.ac.uk/staff/david.foster/software-modelfree/latest/examples/example03.html
+The subject had to identify the interval containing a tone whose fundamental frequency was different from that in the other two intervals. The symbols in the figure below show the proportion of correct responses as the difference between the tones varied. There were 3–49 trials at each stimulus level. See \url{https://personalpages.manchester.ac.uk/staff/d.h.foster/software-modelfree/latest/examples/CarcagnoR.html}
 }
 \usage{data("Carcagno")}
 \format{

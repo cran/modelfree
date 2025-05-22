@@ -5,7 +5,7 @@
 Visual detection of path deviation
 }
 \description{
-The subject was presented with the image of a dot moving rightwards on a linear path until it reached the midline of the display, when it changed direction either upwards or downwards. The subject had to indicate the direction. The symbols in the figure below show the proportion of correct responses in 30 trials as the deviation varied from –3 to 3 units. See \url{https://personalpages.manchester.ac.uk/staff/david.foster/software-modelfree/latest/examples/example02.html}
+The subject was presented with the image of a dot moving rightwards on a linear path until it reached the midline of the display, when it changed direction either upwards or downwards. The subject had to indicate the direction. The symbols in the figure below show the proportion of correct responses in 30 trials as the deviation varied from –3 to 3 units. See \url{https://personalpages.manchester.ac.uk/staff/d.h.foster/software-modelfree/latest/examples/Levi_TripathyR.html}
 }
 \usage{data("Levi_Tripathy")}
 \format{

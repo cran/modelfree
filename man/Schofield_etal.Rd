@@ -5,7 +5,7 @@
 Induction of a visual motion aftereffect
 }
 \description{
-The subject was presented with a moving adaptation stimulus, followed by a test stimulus. The symbols in the figure below show the proportion of responses in which the subject indicated motion of the test stimulus in the same direction as the adapting stimulus, either up or down, as a function of relative modulation depth. There were 10 trials at each stimulus level. See \url{https://personalpages.manchester.ac.uk/staff/david.foster/software-modelfree/latest/examples/example05R.html}
+The subject was presented with a moving adaptation stimulus, followed by a test stimulus. The symbols in the figure below show the proportion of responses in which the subject indicated motion of the test stimulus in the same direction as the adapting stimulus, either up or down, as a function of relative modulation depth. There were 10 trials at each stimulus level. See \url{https://personalpages.manchester.ac.uk/staff/d.h.foster/software-modelfree/latest/examples/Schofield_etalR.html}
 }
 \usage{data("Schofield_etal")}
 \format{

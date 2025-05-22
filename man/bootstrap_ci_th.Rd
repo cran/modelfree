@@ -53,7 +53,7 @@ with guessing and lapsing rates. The confidence interval is based on bootstrap p
 See Efron & Tibshirani's "An introduction to the bootstrap", 1993
 }
 \examples{
-\dontrun{
+\donttest{
 data("Miranda_Henson")
 x = Miranda_Henson$x
 r = Miranda_Henson$r

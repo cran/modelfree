@@ -5,7 +5,7 @@
 Auditory detection of a gap in noise
 }
 \description{
-A 300-ms noise burst containing a gap of 2–8 ms duration or no gap was presented to one ear of a subject. The symbols in the figure below show the proportion of responses "gap" as a function of gap duration. There were 12 trials with each gap duration and 84 trials with no gap. See \url{https://personalpages.manchester.ac.uk/staff/david.foster/software-modelfree/latest/examples/example07R.html}
+A 300-ms noise burst containing a gap of 2–8 ms duration or no gap was presented to one ear of a subject. The symbols in the figure below show the proportion of responses "gap" as a function of gap duration. There were 12 trials with each gap duration and 84 trials with no gap. See \url{https://personalpages.manchester.ac.uk/staff/d.h.foster/software-modelfree/latest/examples/Baker_etalR.html}
 }
 \usage{data("Baker_etal")}
 \format{

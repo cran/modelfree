@@ -50,7 +50,7 @@ threshold for the local polynomial estimate of the psychometric function with
 guessing and lapsing rates.
 }
 \examples{
-\dontrun{
+\donttest{
 data("Miranda_Henson")
 x = Miranda_Henson$x
 r = Miranda_Henson$r

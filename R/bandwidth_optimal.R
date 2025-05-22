@@ -42,7 +42,7 @@ bandwidth_optimal<-function( ptrue, r, m, x, H, link = "logit", guessing = 0,
 # get ise for this value of h
 # this is a nested function, so it shares variables!
     get_ise_p <- function( h ) {
-        fest <- locglmfit( x, r, m, x, h, FALSE, link, guessing, lapsing,
+        fest <- locglmfit_inter( x, r, m, x, h, FALSE, link, guessing, lapsing,
                            K, p, ker, maxiter, tol );
 # return MISE for this h
 	return( ISE( ptrue, fest$pfit ) );
@@ -51,7 +51,7 @@ bandwidth_optimal<-function( ptrue, r, m, x, H, link = "logit", guessing = 0,
 # get ise on eta scale on for this value of h
 # this is a nested function, so it shares variables!
     get_ise <- function( h ) {
-        ftmp <- locglmfit( x, r, m, x, h, FALSE, link, guessing, lapsing,
+        ftmp <- locglmfit_inter( x, r, m, x, h, FALSE, link, guessing, lapsing,
                            K, p, ker, maxiter, tol );
         fit_eta <- linkfun( ptrue );
 # return MISE for this h
@@ -60,7 +60,7 @@ bandwidth_optimal<-function( ptrue, r, m, x, H, link = "logit", guessing = 0,
 # get deviance for this value of h
 # this is a nested function, so it shares variables!
     get_dev <- function( h ) {
-        ftmp <- locglmfit( x, r, m, x, h, FALSE, link, guessing, lapsing,
+        ftmp <- locglmfit_inter( x, r, m, x, h, FALSE, link, guessing, lapsing,
                            K, p, ker, maxiter, tol );
 # return MISE for this h
         D = return( deviance2( ptrue * m, m, ftmp$pfit ) );
@@ -131,7 +131,7 @@ bandwidth_optimal<-function( ptrue, r, m, x, H, link = "logit", guessing = 0,
 
     linkfun <- linkuser$linkfun;
 
-options(warn=-1)
+
 # CROSS-VALIDATION
 # BANDIWDTH
     h <- NULL;
@@ -163,6 +163,5 @@ options(warn=-1)
             }
         }
     }
-    options(warn=-1)
-    return( h );
+     return( h );
 }

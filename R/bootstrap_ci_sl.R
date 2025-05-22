@@ -39,7 +39,7 @@
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' data("Miranda_Henson")
 #' x = Miranda_Henson$x
 #' r = Miranda_Henson$r
@@ -173,8 +173,7 @@ bootstrap_ci_sl <- function( TH, r, m, x, N, h0, alpha = 0.05,
     n <- length( x );
 
 # INITIAL ESTIMATE
-# initial estimates with bandiwdth h0
-options(warn=-1)
+# initial estimates with bandwidth h0
     f <- locglmfit( x, r, m, x, h0, FALSE, link, guessing, lapsing, K,
                     p, ker, maxiter, tol )$pfit;
 
@@ -212,12 +211,11 @@ options(warn=-1)
 # BOOTSTRAP ESTIMATES OF THE THRESHOLD
 
     for( i in 1:N ) {
-    	ftmp <- locglmfit( X, samp[,i], m, x, h0, FALSE, link, guessing,
+    	ftmp <- locglmfit_inter( X, samp[,i], m, x, h0, FALSE, link, guessing,
                            lapsing, K, p, ker, maxiter, tol )$pfit;
         sl_boot[i] <- threshold_slope( ftmp, X, TH )$slope;
      }
 
-options(warn=0)
 
     ci[1] <- quantile( sl_boot, probs = alpha / 2 );
     ci[2] <- quantile( sl_boot, probs = 1 - alpha / 2 );

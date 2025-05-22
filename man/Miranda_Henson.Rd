@@ -6,7 +6,7 @@
 Detection of a flash of light
 }
 \description{
-A flash of light of variable intensity was presented repeatedly at a fixed location in the visual field of a subject who reported whether the flash was visible. There were 3–20 trials at each stimulus level. See \url{https://personalpages.manchester.ac.uk/staff/david.foster/software-modelfree/latest/examples/example01R.html}
+A flash of light of variable intensity was presented repeatedly at a fixed location in the visual field of a subject who reported whether the flash was visible. There were 3–20 trials at each stimulus level. See \url{https://personalpages.manchester.ac.uk/staff/d.h.foster/software-modelfree/latest/examples/Miranda_HensonR.html}
 }
 \usage{
 data("Miranda_Henson")

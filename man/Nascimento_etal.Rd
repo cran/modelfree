@@ -5,7 +5,7 @@
 Discrimination of image approximations
 }
 \description{
-The subject was shown an image of a natural scene and an approximation of this image based on principal component analysis. The task was to distinguish between the images. The symbols in the figure below show the proportion of correct responses as a function of number of components in the approximation. There were 200 trials at each level pooled over a range of natural scenes. See \url{https://personalpages.manchester.ac.uk/staff/david.foster/software-modelfree/latest/examples/example06R.html}
+The subject was shown an image of a natural scene and an approximation of this image based on principal component analysis. The task was to distinguish between the images. The symbols in the figure below show the proportion of correct responses as a function of number of components in the approximation. There were 200 trials at each level pooled over a range of natural scenes. See \url{https://personalpages.manchester.ac.uk/staff/d.h.foster/software-modelfree/latest/examples/Nascimento_etalR.html}
 }
 \usage{data("Nascimento_etal")}
 \format{

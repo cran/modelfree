@@ -9,7 +9,7 @@ weibull_link_private <-function( K, guessing, lapsing ) {
 # is set to be equal K, hence link is a function of only one variable.
 #
 # INPUT
-# 
+#
 # K - power parameter for Weibull link function
 # guessing - guessing rate
 # lapsing - lapsing rate
@@ -24,8 +24,6 @@ weibull_link_private <-function( K, guessing, lapsing ) {
     weibullFL<-function( mu, g, l, k ) {
         mu <- pmax( pmin( l - .Machine$double.eps, mu ), g
               + .Machine$double.eps );
-              print("FL")
-              print((-log( ( l - mu ) / ( l - g ) ) )^( 1 / k ))
         return( (-log( ( l - mu ) / ( l - g ) ) )^( 1 / k ) );
     }
 

@@ -34,19 +34,7 @@
 #' @importFrom stats rbinom optimize
 #'
 #' @examples
-#' data("Baker_etal")
-#' x = Baker_etal$x
-#' r = Baker_etal$r
-#' m = Baker_etal$m
-#' plot( x, r / m, xlim = c( 0.16, 7.83 ), ylim = c( -0.01, 1.01 ), type = "p", pch="*" )
-#' val <- binomfit_lims( r, m, x, link = "probit" )
-#' numxfit <- 199; # Number of new points to be generated minus 1
-#' xfit <- (max(x)-min(x)) * (0:numxfit) / numxfit + min(x)
-#' # Plot the fitted curve
-#' pfit<-predict( val$fit, data.frame( x = xfit ), type = "response" )
-#' lines(xfit, pfit )
-#' @examples
-#' \dontrun{
+#' \donttest{
 #' data("Miranda_Henson")
 #' x = Miranda_Henson$x
 #' r = Miranda_Henson$r
@@ -111,7 +99,7 @@ bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = "logit", guess
     get_ise_p <- function( h ) {
         fest <- matrix( 0, n, N );
         for( i in 1:N ) {
-            fest[,i] <- locglmfit( x, samp[,i], m, x, h, FALSE, link,
+            fest[,i] <- locglmfit_inter( x, samp[,i], m, x, h, FALSE, link,
                         guessing, lapsing, K, p, ker, maxiter, tol )$pfit;
 
 }
@@ -123,7 +111,7 @@ bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = "logit", guess
     get_ise <- function( h ) {
         fest <- matrix( 0, n, N );
         for( i in 1:N ) {
-            fest[,i] <- locglmfit( x, samp[,i], m, x, h, FALSE, link,
+            fest[,i] <- locglmfit_inter( x, samp[,i], m, x, h, FALSE, link,
                         guessing, lapsing, K, p, ker, maxiter, tol )$etafit;
         }
 # return MISE for this h
@@ -134,7 +122,7 @@ bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = "logit", guess
     get_dev <- function( h ) {
         devfit <- numeric( N );
         for( i in 1:N ) {
-            fest <- locglmfit( x, samp[,i], m, x, h, FALSE, link,
+            fest <- locglmfit_inter( x, samp[,i], m, x, h, FALSE, link,
                     guessing, lapsing, K, p, ker, maxiter, tol )$pfit;
             devfit[i] <- deviance2( r, m , fest );
         }
@@ -182,15 +170,15 @@ bandwidth_bootstrap <- function( r, m, x, H, N, h0 = NULL, link = "logit", guess
     checkinput( "method", method );
 
     n <- length(x);
-options(warn=-1)
-# OBTAIN INITIAL BANDWIDTH, IF NOT GIVEN
+
+    # OBTAIN INITIAL BANDWIDTH, IF NOT GIVEN
     if( is.null( h0 ) ) {
-        h0 <- (1.5 * n^.1) * bandwidth_plugin( r, m, x, link, guessing, lapsing, K, p, ker );
+        h0 <- max(H[1],(1.5 * n^.1) * bandwidth_plugin( r, m, x, link, guessing, lapsing, K, p, ker ) )
     }
 
 # INITIAL ESTIMATE
-# pilot over-smoothed estimate with bandiwdth h0
-    f <- locglmfit( x, r, m, x, h0, FALSE, link, guessing, lapsing, K,
+# pilot over-smoothed estimate with bandwidth h0
+    f <- locglmfit_inter( x, r, m, x, h0, FALSE, link, guessing, lapsing, K,
                     p, ker, maxiter, tol );
 
 # SAMPLING
@@ -248,6 +236,5 @@ eta1 <- matrix( rep( f$etafit, N ), n, N );
             }
         }
     }
-    options(warn=0)
     return( h );
 }

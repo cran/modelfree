@@ -90,7 +90,7 @@ bandwidth_cross_validation<-function( r, m, x, H, link = "logit",
         fest <- NULL;
         for( i in 1:Lx ) {
 
- 		    fest[i] <- locglmfit( x[i], r[-i], m[-i], x[-i], h, FALSE,
+ 		    fest[i] <- locglmfit_inter( x[i], r[-i], m[-i], x[-i], h, FALSE,
                         link, guessing, lapsing, K, p, ker, maxiter, tol )$
                         pfit;
 
@@ -107,7 +107,7 @@ bandwidth_cross_validation<-function( r, m, x, H, link = "logit",
 
         fest <- NULL;
         for( i in 1:Lx ) {
-            fest[i] <- locglmfit( x[i], r[-i], m[-i], x[-i], h, FALSE,
+            fest[i] <- locglmfit_inter( x[i], r[-i], m[-i], x[-i], h, FALSE,
                        link, guessing, lapsing, K, p, ker, maxiter, tol )$
                        etafit;
         }
@@ -124,7 +124,7 @@ bandwidth_cross_validation<-function( r, m, x, H, link = "logit",
         fest <- NULL;
         for( i in 1:Lx ) {
 
-            fest[i] <- locglmfit( x[i], r[-i], m[-i], x[-i], h, FALSE,
+            fest[i] <- locglmfit_inter( x[i], r[-i], m[-i], x[-i], h, FALSE,
                        link, guessing, lapsing, K, p, ker, maxiter, tol )$
                        pfit;
         }
@@ -196,7 +196,6 @@ bandwidth_cross_validation<-function( r, m, x, H, link = "logit",
 
     linkfun <- linkuser$linkfun;
 
-options(warn=-1)
 # BANDIWDTH
     h <- NULL;
     if( method == "ISE" ) {
@@ -227,6 +226,6 @@ options(warn=-1)
             }
         }
     }
-		    options(warn=0)
+
     return( h );
 }

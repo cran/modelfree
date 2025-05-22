@@ -6,7 +6,7 @@
 Discrimination of "porthole" views of natural scenes
 }
 \description{
-The subject was presented with a display split into two parts, one containing a pair of patches from the same image, the other a pair from different images, and the subject had to judge which pair came from the same image. The symbols in the figure below show the proportion of correct responses in 200 trials as a function of patch separation. See https://personalpages.manchester.ac.uk/staff/david.foster/software-modelfree/latest/examples/example04R.html
+The subject was presented with a display split into two parts, one containing a pair of patches from the same image, the other a pair from different images, and the subject had to judge which pair came from the same image. The symbols in the figure below show the proportion of correct responses in 200 trials as a function of patch separation. See \url{https://personalpages.manchester.ac.uk/staff/d.h.foster/software-modelfree/latest/examples/Xie_GriffinR.html}
 }
 \usage{data("Xie_Griffin")}
 \format{

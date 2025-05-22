@@ -47,18 +47,7 @@ This function finds a bootstrap estimate of the optimal bandwidth h for a local 
 estimate of the psychometric function with specified guessing and lapsing rates.
 }
 \examples{
-data("Baker_etal")
-x = Baker_etal$x
-r = Baker_etal$r
-m = Baker_etal$m
-plot( x, r / m, xlim = c( 0.16, 7.83 ), ylim = c( -0.01, 1.01 ), type = "p", pch="*" )
-val <- binomfit_lims( r, m, x, link = "probit" )
-numxfit <- 199; # Number of new points to be generated minus 1
-xfit <- (max(x)-min(x)) * (0:numxfit) / numxfit + min(x)
-# Plot the fitted curve
-pfit<-predict( val$fit, data.frame( x = xfit ), type = "response" )
-lines(xfit, pfit )
-\dontrun{
+\donttest{
 data("Miranda_Henson")
 x = Miranda_Henson$x
 r = Miranda_Henson$r

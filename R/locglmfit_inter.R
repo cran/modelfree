@@ -1,53 +1,12 @@
-#' Local polynomial estimator of a psychometric function
-#'
-#' Local polynomial estimator for the psychometric function and eta function (psychometric function
-#' transformed by link) for binomial data; also returns the hat matrix H.
-#'
-#' @usage locglmfit( xfit, r, m, x, h, returnH = FALSE, link = "logit",
-#'                guessing = 0, lapsing = 0, K = 2, p = 1,
-#'                ker = "dnorm", maxiter = 50, tol = 1e-6 )
-#'
-#' @param xfit points at which to calculate the estimate pfit
-#' @param r    number of successes at points x
-#' @param m    number of trials at points x
-#' @param x    stimulus levels
-#' @param h    bandwidth(s)
-#' @param returnH  (optional) logical, if TRUE then hat matrix is calculated; default is FALSE
-#' @param link     (optional) name of the link function; default is 'logit'
-#' @param guessing (optional) guessing rate; default is 0
-#' @param lapsing  (optional) lapsing rate; default is 0
-#' @param K    (optional) power parameter for Weibull and reverse Weibull link; default is 2
-#' @param p        (optional) degree of the polynomial; default is 1
-#' @param ker      (optional) kernel function for weights; default is 'dnorm'
-#' @param maxiter  (optional) maximum number of iterations in Fisher scoring; default is 50
-#' @param tol      (optional) tolerance level at which to stop Fisher scoring; default is 1e-6
-#'
-#' @returns \verb{pfit    }    value of the local polynomial estimate at points xfit
-#' @returns \verb{etafit  }  estimate of eta (link of pfit)
-#' @returns \verb{H       }       hat matrix (OPTIONAL)
-#'
-#' @examples
-#' data("Miranda_Henson")
-#' x = Miranda_Henson$x
-#' r = Miranda_Henson$r
-#' m = Miranda_Henson$m
-#' numxfit <- 199; # Number of new points to be generated minus 1
-#' xfit <- (max(x)-min(x)) * (0:numxfit) / numxfit + min(x)
-#' # Find a plug-in bandwidth
-#' bwd <- bandwidth_plugin( r, m, x)
-#' pfit <- locglmfit( xfit, r, m, x, bwd )$pfit
-#' # Plot the fitted curve
-#' plot( x, r / m, xlim = c( 0.1, 1.302 ), ylim = c( 0.0165, 0.965 ), type = "p", pch="*" )
-#' lines(xfit, pfit )
-#'
-#' @export
-locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = "logit",
+locglmfit_inter<-function( xfit, r, m, x, h, returnH = FALSE, link = "logit",
                      guessing = 0, lapsing = 0, K = 2, p = 1,
                      ker = "dnorm", maxiter = 50, tol = 1e-6 ) {
 #
+# THIS IS AN INTERNAL FUNCTION: USE LOCGLMFIT FOR BEST RESULTS
+#
 # Local polynomial estimator for the psychometric function and eta function (psychometric function
 # transformed by link) for binomial data; also returns the hat matrix H. Actual calculations are
-# done in LOCGLMFIT_PRIVATE or LOCGLMFIT_SPARSE_PRIVATE depending on the size of the data set.
+# done in LOCGLMFIT_INTER_PRIVATE or LOCGLMFIT_INTER_SPARSE_PRIVATE depending on the size of the data set.
 # Here, the data are split into several parts to speed up the calculations.
 #
 #
@@ -77,47 +36,6 @@ locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = "logit",
 # etafit  - estimate of eta (link of pfit)
 # H       - hat matrix (OPTIONAL)
 
-# First 5 arguments are mandatory
-    if( missing("xfit") || missing("r") || missing("m") || missing("x") || missing("h") ) {
-        stop("Check input. First 5 arguments are mandatory");
-    }
-
-# CHECK ROBUSTNESS OF INPUT PARAMETERS
-    if ( !is.vector( xfit ) ) {
-        stop("Vector xfit should be a column vector");
-    }
-    checkdata<-list();
-    checkdata[[1]] <- x;
-    checkdata[[2]] <- r;
-    checkdata[[3]] <- m;
-    checkinput("checkdesignpoints",x)
-    checkinput( "psychometricdata", checkdata );
-    rm( checkdata )
-    if ( !is.vector( h ) ) {
-        stop("Bandwidths h should be a vector");
-    }
-    if( !( length( h ) == 1 || length( h ) == length( xfit ) ) ) {
-        stop( "Bandwidth h must be either a scalar or a vector with the same number of elements as xfit" );
-    }
-    checkinput( "linkfunction", link );
-    if( length( guessing ) > 1 ) {
-        stop( "Guessing rate must be a scalar" );
-    }
-    if( length( lapsing ) > 1 ) {
-        stop( "Lapsing rate must be a scalar" );
-    }
-
-    checkinput( 'guessingandlapsing', c(guessing, lapsing) );
-   if (link == "weibull" || link == "revweibull"){
-	    checkinput( "exponentk", K );
-	    }
-    pn <- list()
-	pn[[1]] <- p
-	pn[[2]] <- x
-    checkinput( "degreepolynomial", pn );
-    checkinput( 'kernel', ker );
-    checkinput( 'maxiter', maxiter );
-    checkinput( 'tolerance', tol );
 
 # INITIAL VALUES
     split <- 20;
@@ -144,16 +62,16 @@ locglmfit<-function( xfit, r, m, x, h, returnH = FALSE, link = "logit",
 # big data
 # First try to load package SparseM
       if (requireNamespace("SparseM", quietly = TRUE)) {
-        fun_estim <- locglmfit_sparse_private;
+        fun_estim <- locglmfit_inter_sparse_private;
       } else {
-        fun_estim <- locglmfit_private;
+        fun_estim <- locglmfit_inter_private;
         message("Package SparseM not installed. No sparse matrices used");
         message("SparseM can be found at CRAN web site http://cran.r-project.org/");
       }
     }
     else {
 # small data
-        fun_estim <- locglmfit_private;
+        fun_estim <- locglmfit_inter_private;
     }
 
 # SPLIT AND EVALUATION
